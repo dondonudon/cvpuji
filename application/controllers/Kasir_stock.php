@@ -48,6 +48,48 @@ class Kasir_stock extends CI_Controller
    redirect(site_url('stock_m_kasir'));
   }
  }
+ public function excel()
+ {
+  $this->load->helper('exportexcel');
+  $namaFile  = "stock_kasir.xls";
+  $judul     = "stock_kasir";
+  $tablehead = 0;
+  $tablebody = 1;
+  $nourut    = 1;
+  //penulisan header
+  header("Pragma: public");
+  header("Expires: 0");
+  header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+  header("Content-Type: application/force-download");
+  header("Content-Type: application/octet-stream");
+  header("Content-Type: application/download");
+  header("Content-Disposition: attachment;filename=" . $namaFile . "");
+  header("Content-Transfer-Encoding: binary ");
+
+  xlsBOF();
+
+  $kolomhead = 0;
+  xlsWriteLabel($tablehead, $kolomhead++, "No");
+  xlsWriteLabel($tablehead, $kolomhead++, "Nama Kasir");
+  xlsWriteLabel($tablehead, $kolomhead++, "Nama Barang");
+  xlsWriteLabel($tablehead, $kolomhead++, "Stok");
+
+  foreach ($this->Kasir_stock_model->excel() as $data) {
+   $kolombody = 0;
+
+   //ubah xlsWriteLabel menjadi xlsWriteNumber untuk kolom numeric
+   xlsWriteNumber($tablebody, $kolombody++, $nourut);
+   xlsWriteLabel($tablebody, $kolombody++, $data->nama_kasir);
+   xlsWriteLabel($tablebody, $kolombody++, $data->nama_barang);
+   xlsWriteLabel($tablebody, $kolombody++, $data->stok);
+
+   $tablebody++;
+   $nourut++;
+  }
+
+  xlsEOF();
+  exit();
+ }
 
 }
 

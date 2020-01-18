@@ -16,9 +16,9 @@
             <thead>
                 <tr>
                     <th width="30px">No</th>
-		    <th>Customer</th>
+		    <!-- <th>Customer</th> -->
 		    <th>Barang</th>
-		    <th>Harga</th>
+		    <!-- <th>Harga</th> -->
 		    <!-- <th>Keterangan</th> -->
 		    <!-- <th>Opsi1</th>
 		    <th>Opsi2</th>
@@ -76,7 +76,7 @@
                         {
                             "data": "id_pricelist",
                             "orderable": false
-                        },{"data": "nama_kasir"},{"data": "nama_barang"},{"data": "harga"},
+                        },{"data": "nama_barang"},
                         {
                             "data" : "action",
                             "orderable": false,
@@ -93,4 +93,11 @@
                     }
                 });
             });
+        </script>
+        <script type="text/javascript">
+            <?php if ($this->session->flashdata('success')) {?>
+                alert("<?php echo $this->session->flashdata('success'); ?>");
+            <?php } else if ($this->session->flashdata('error')) {?>
+                alert("<?php echo $this->session->flashdata('error'); ?>");
+            <?php }?>
         </script>

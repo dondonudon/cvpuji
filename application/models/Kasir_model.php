@@ -17,17 +17,11 @@ class Kasir_model extends CI_Model
  }
 
  // datatables
- public function json($data)
+ public function json($data1)
  {
-  $kode_m_kasir = $data['kode_m_kasir'];
-  $this->datatables->select('tab_barang.nama,temp_trans.id_trans,temp_trans.notrans,temp_trans.kode_barang,temp_trans.kode_m_kasir,temp_trans.qty,temp_trans.harga,temp_trans.jumlah,temp_trans.datetime');
-  $this->datatables->from('temp_trans');
-//   $this->datatables->add_column('harga', '$1', 'rupiah(harga)');
-  //   $this->datatables->add_column('jumlah', '$1', 'rupiah(jumlah)');
-  //add this line for join
-  $this->datatables->join('tab_barang', 'temp_trans.kode_barang = tab_barang.kode_barang');
-  $this->datatables->add_column('action', anchor(site_url('kasir' . $kode_m_kasir . '/delete/$1'), '<i class="fa fa-trash-o" aria-hidden="true"></i>', 'class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'id_trans');
-  return $this->datatables->generate();
+  $kode_m_kasir = $data1['kode_m_kasir'];
+  $hasil        = $this->db->query("SELECT tab_barang.nama, temp_trans.id_trans,temp_trans.notrans, temp_trans.kode_barang, temp_trans.kode_m_kasir, temp_trans.qty,temp_trans.harga, temp_trans.hpp, temp_trans.jumlah, temp_trans.jumlah_hpp, temp_trans.datetime FROM temp_trans INNER JOIN tab_barang ON tab_barang.kode_barang = temp_trans.kode_barang WHERE temp_trans.kode_m_kasir = '$kode_m_kasir'");
+  return $hasil->result_array();
  }
 
  // get all
@@ -79,18 +73,38 @@ class Kasir_model extends CI_Model
   $this->db->insert($this->table, $data);
  }
 
- // update data
- public function update($id, $data)
- {
-  $this->db->where($this->id, $id);
-  $this->db->update($this->table, $data);
- }
-
  // delete data
  public function delete($id)
  {
   $this->db->where($this->id, $id);
   $this->db->delete($this->table);
+ }
+
+ public function update($data, $id)
+ {
+  $this->db->where('id_trans', $id);
+  $this->db->update('temp_trans', $data);
+  $qty = $data['qty'];
+  $hsl = $this->db->query("SELECT
+                            tab_pricelist.harga, tab_barang.harga_kasir as hpp
+                          FROM
+                            tab_pricelist
+                          INNER JOIN tab_kasir ON
+                            tab_kasir.kode_kasir = tab_pricelist.kode_kasir
+                          INNER JOIN tab_barang ON
+                            tab_pricelist.kode_barang = tab_barang.kode_barang
+                          WHERE
+                            tab_pricelist.kode_barang = (SELECT kode_barang FROM temp_trans WHERE id_trans = '$id')
+                            AND $qty BETWEEN tab_kasir.qty_a AND tab_kasir.qty_b")->result();
+  foreach ($hsl as $data) {
+   $hasil = array(
+    'harga' => $data->harga,
+    'hpp'   => $data->hpp,
+   );
+
+   $this->db->query("UPDATE temp_trans SET harga ='$hasil[harga]', hpp = '$hasil[hpp]', jumlah = '$hasil[harga]'*'$qty', jumlah_hpp = '$hasil[hpp]'*'$qty' WHERE id_trans = '$id'");
+  }
+
  }
 
  //get harga
@@ -101,11 +115,13 @@ class Kasir_model extends CI_Model
   // $kode_kasir = $ret->kode_kasir;
 
   $hsl = $this->db->query("SELECT
-                            harga
+                            tab_pricelist.harga, tab_barang.harga_kasir as hpp
                           FROM
                             tab_pricelist
-                          inner join tab_kasir on
+                          INNER JOIN tab_kasir ON
                             tab_kasir.kode_kasir = tab_pricelist.kode_kasir
+                          INNER JOIN tab_barang ON
+                            tab_pricelist.kode_barang = tab_barang.kode_barang
                           WHERE
                             tab_pricelist.kode_barang = '$kode_barang'
                             AND $qty BETWEEN tab_kasir.qty_a AND tab_kasir.qty_b");
@@ -113,6 +129,72 @@ class Kasir_model extends CI_Model
    foreach ($hsl->result() as $data) {
     $hasil = array(
      'harga' => $data->harga,
+     'hpp'   => $data->hpp,
+    );
+   }
+  }
+  return $hasil;
+ }
+
+ public function get_barcode($barcode, $kode_m_kasir, $notrans)
+ {
+  $hsl = $this->db->query("SELECT
+                              stock_m_kasir.kode_barang, stock_m_kasir.stok FROM stock_m_kasir
+                              INNER JOIN tab_barang ON tab_barang.kode_barang = stock_m_kasir.kode_barang
+                            WHERE
+                              tab_barang.barcode = '$barcode'");
+  $query = $hsl->row();
+  $stok  = $query->stok;
+  if ($hsl->num_rows() > 0 && $stok > 0) {
+   foreach ($hsl->result() as $data) {
+    $hasil = array(
+     'kode_barang' => $data->kode_barang,
+    );
+    $datetime = date('Y-m-d H:i:s');
+
+    $hsl2 = $this->db->query("SELECT
+                            tab_pricelist.harga, tab_barang.harga_kasir as hpp
+                          FROM
+                            tab_pricelist
+                          INNER JOIN tab_kasir ON
+                            tab_kasir.kode_kasir = tab_pricelist.kode_kasir
+                          INNER JOIN tab_barang ON
+                            tab_pricelist.kode_barang = tab_barang.kode_barang
+                          WHERE
+                            tab_pricelist.kode_barang = '$hasil[kode_barang]'
+                            AND 1 BETWEEN tab_kasir.qty_a AND tab_kasir.qty_b")->result();
+    foreach ($hsl2 as $data2) {
+
+     $this->db->query("INSERT INTO temp_trans (notrans, kode_barang, kode_m_kasir,qty,harga,jumlah,hpp,jumlah_hpp,datetime) VALUES
+                      ('$notrans','$hasil[kode_barang]','$kode_m_kasir',1,'$data2->harga',1*$data2->harga,$data2->hpp,1*$data2->hpp,'$datetime')");
+    }
+
+   }
+  } else {
+   $hasil = array(
+    'message' => false,
+   );
+  }
+  return $hasil;
+
+ }
+
+ public function hapus_barang($id_trans)
+ {
+  $hasil = $this->db->query("DELETE FROM temp_trans WHERE id_trans='$id_trans'");
+  return $hasil;
+ }
+
+ public function get_barang_by_kode($id_trans)
+ {
+  $hsl = $this->db->query("SELECT tab_barang.nama, temp_trans.id_trans, temp_trans.notrans, temp_trans.kode_barang, temp_trans.qty, temp_trans.datetime FROM temp_trans INNER JOIN tab_barang ON tab_barang.kode_barang=temp_trans.kode_barang
+                         WHERE temp_trans.id_trans='$id_trans'");
+  if ($hsl->num_rows() > 0) {
+   foreach ($hsl->result() as $data) {
+    $hasil = array(
+     'id_trans' => $data->id_trans,
+     'nama'     => $data->nama,
+     'qty'      => $data->qty,
     );
    }
   }
@@ -134,7 +216,7 @@ class Kasir_model extends CI_Model
  }
 
  // insert data
- public function insert_trans($kode_m_kasir)
+ public function insert_trans($kode_m_kasir, $notrans)
  {
 
   $q1 = $this->db->query("SELECT * FROM temp_trans WHERE kode_m_kasir = '$kode_m_kasir'");
@@ -156,14 +238,18 @@ class Kasir_model extends CI_Model
 
   }
   //select jumlah trans
-  $q3     = $this->db->query("SELECT sum(jumlah) as jumlah FROM temp_trans WHERE notrans = '$notrans'");
-  $hasil  = $q3->row();
-  $jumlah = $hasil->jumlah;
+  $q3         = $this->db->query("SELECT sum(jumlah) as jumlah, sum(jumlah_hpp) as jumlah_hpp FROM temp_trans WHERE notrans = '$notrans'");
+  $hasil      = $q3->row();
+  $jumlah     = $hasil->jumlah;
+  $jumlah_hpp = $hasil->jumlah_hpp;
 
-  //insert trans
-  $q4 = $this->db->query("INSERT into trans (notrans,kode_m_kasir,jumlah,datetime) VALUES ('$notrans','$kode_m_kasir',$jumlah,'$datetime')");
+  if (!empty($notrans) && !empty($datetime)) {
+   //insert trans
+   $q4 = $this->db->query("INSERT into trans (notrans,kode_m_kasir,jumlah,jumlah_hpp,datetime) VALUES ('$notrans','$kode_m_kasir',$jumlah,$jumlah_hpp,'$datetime')");
+  }
+
   //insert trans_detail
-  $q5 = $this->db->query("INSERT INTO trans_detail (notrans, kode_barang, kode_m_kasir, qty, harga, jumlah, datetime) SELECT notrans, kode_barang, kode_m_kasir, qty, harga, jumlah, datetime FROM temp_trans WHERE kode_m_kasir = '$kode_m_kasir'");
+  $q5 = $this->db->query("INSERT INTO trans_detail (notrans, kode_barang, kode_m_kasir, qty, harga, hpp, jumlah, jumlah_hpp, datetime) SELECT notrans, kode_barang, kode_m_kasir, qty, harga, hpp, jumlah, jumlah_hpp, datetime FROM temp_trans WHERE kode_m_kasir = '$kode_m_kasir'");
   //insert log
   $q6 = $this->db->query("INSERT INTO log (ket, kode_barang, kode_m_kasir, qty, tipe, datetime) SELECT notrans, kode_barang, kode_m_kasir, qty ,'C' AS tipe, datetime FROM temp_trans WHERE kode_m_kasir = '$kode_m_kasir'");
   //delete temp_trans

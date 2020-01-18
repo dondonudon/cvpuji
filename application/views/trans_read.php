@@ -7,12 +7,16 @@ $data = $this->db->query("SELECT
                                 t.kode_m_kasir,
                                 mk.nama as nama_kasir,
                                 t.jumlah,
-                                t.`datetime`,
+                                t.datetime,
+                                t.jumlah_hpp,
+                                td.hpp,
+                                t.jumlah_hpp,
                                 td.kode_barang,
                                 tb.nama,
                                 td.qty,
                                 td.harga,
-                                td.jumlah as subtotal
+                                td.jumlah as subtotal,
+                                td.jumlah_hpp as subtotal_hpp
                             FROM
                                 trans t
                             INNER JOIN trans_detail td ON
@@ -56,6 +60,14 @@ $data = $this->db->query("SELECT
         <td>:</td>
         <td><?php echo rupiah($row->jumlah); ?></td>
         </tr>
+        <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td>Laba</td>
+        <td>:</td>
+        <td><?php echo rupiah($row->jumlah - $row->jumlah_hpp); ?></td>
+        </tr>
         </table>
         <hr>
         <p>
@@ -64,6 +76,7 @@ $data = $this->db->query("SELECT
             <tr>
             <td>Nama Barang</td>
             <td>QTY</td>
+            <td>HPP</td>
             <td>Harga</td>
             <td>Subtotal</td>
             </tr>
@@ -76,6 +89,7 @@ $data = $this->db->query("SELECT
         <tr>
         <td><?php echo $isi['nama']; ?></td>
         <td><?php echo $isi['qty']; ?></td>
+        <td><?php echo rupiah($isi['hpp']); ?></td>
         <td><?php echo rupiah($isi['harga']); ?></td>
         <td><?php echo rupiah($isi['subtotal']); ?></td>
         </tr>
@@ -84,9 +98,11 @@ $data = $this->db->query("SELECT
         </tbody>
 
         <tfoot>
-        <tr><td colspan="3">
+        <tr><td colspan="2">
         Jumlah
         </td>
+        <td><?php echo rupiah($row->jumlah_hpp); ?></td>
+        <td></td>
         <td><?php echo rupiah($row->jumlah); ?></td></tr>
 
         </tfoot>

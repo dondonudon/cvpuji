@@ -27,16 +27,20 @@ class Welcome extends CI_Controller
   $list = $this->Trans_model->get_datatables();
   $data = array();
   $no   = $_POST['start'];
+  $sum  = 0;
   foreach ($list as $customers) {
    $no++;
    $row   = array();
    $row[] = $no;
-   $row[] = $customers->nama;
-   $row[] = number_format($customers->jumlah);
-   $row[] = $customers->datetime;
-   $row[] = '<a class="btn btn-sm btn-primary" href="' . base_url('welcome/read/' . $customers->notrans) . '" title="Edit" target="_blank">Detail</a>';
-
+   $row[] = $customers->notrans;
+   //$row[]  = $customers->nama;
+   $row[]  = number_format($customers->jumlah);
+   $row[]  = number_format($customers->jumlah - $customers->jumlah_hpp);
+   $row[]  = $customers->datetime;
+   $row[]  = '<a class="btn btn-sm btn-primary" href="' . base_url('welcome/read/' . $customers->notrans) . '" title="Edit" target="_blank">Detail</a>';
    $data[] = $row;
+
+   $sum += $customers->jumlah;
   }
 
   $output = array(
@@ -44,6 +48,7 @@ class Welcome extends CI_Controller
    "recordsTotal"    => $this->Trans_model->count_all(),
    "recordsFiltered" => $this->Trans_model->count_filtered(),
    "data"            => $data,
+   "sum"             => $sum,
   );
   //output to json format
   echo json_encode($output);
@@ -55,6 +60,64 @@ class Welcome extends CI_Controller
   //$this->load->view('kasir/kasir1/trans_read', $data);
   $this->template->load('template', 'trans_read', $data);
 
+ }
+
+ public function footer()
+ {
+  $tanggal_a = $_POST['tanggal_a'];
+  $tanggal_b = $_POST['tanggal_b'];
+ }
+
+ public function excel()
+ {
+  $tanggal_a = $_POST['tanggal_a'];
+  $tanggal_b = $_POST['tanggal_b'];
+
+  $this->load->helper('exportexcel');
+  $namaFile  = "Laporan_Penjualan.xls";
+  $judul     = "laporan_penjualan";
+  $tablehead = 0;
+  $tablebody = 1;
+  $nourut    = 1;
+  //penulisan header
+  header("Pragma: public");
+  header("Expires: 0");
+  header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+  header("Content-Type: application/force-download");
+  header("Content-Type: application/octet-stream");
+  header("Content-Type: application/download");
+  header("Content-Disposition: attachment;filename=" . $namaFile . "");
+  header("Content-Transfer-Encoding: binary ");
+
+  xlsBOF();
+
+  $kolomhead = 0;
+  xlsWriteLabel($tablehead, $kolomhead++, "No");
+  xlsWriteLabel($tablehead, $kolomhead++, "No Transaksi");
+  xlsWriteLabel($tablehead, $kolomhead++, "Nama Kasir");
+  xlsWriteLabel($tablehead, $kolomhead++, "Jumlah");
+  xlsWriteLabel($tablehead, $kolomhead++, "Jumlah HPP");
+  xlsWriteLabel($tablehead, $kolomhead++, "Laba");
+  xlsWriteLabel($tablehead, $kolomhead++, "Tanggal");
+
+  foreach ($this->Trans_model->excel($tanggal_a, $tanggal_b) as $data) {
+   $kolombody = 0;
+   $laba      = $data->jumlah - $data->jumlah_hpp;
+   //ubah xlsWriteLabel menjadi xlsWriteNumber untuk kolom numeric
+   xlsWriteNumber($tablebody, $kolombody++, $nourut);
+   xlsWriteLabel($tablebody, $kolombody++, $data->notrans);
+   xlsWriteLabel($tablebody, $kolombody++, $data->nama);
+   xlsWriteLabel($tablebody, $kolombody++, $data->jumlah);
+   xlsWriteLabel($tablebody, $kolombody++, $data->jumlah_hpp);
+   xlsWriteLabel($tablebody, $kolombody++, $laba);
+   xlsWriteLabel($tablebody, $kolombody++, $data->datetime);
+
+   $tablebody++;
+   $nourut++;
+  }
+
+  xlsEOF();
+  exit();
  }
 
 }

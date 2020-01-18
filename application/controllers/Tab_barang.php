@@ -62,6 +62,7 @@ class Tab_barang extends CI_Controller
    'kode_barang' => set_value('kode_barang'),
    'kode_group'  => set_value('kode_group'),
    'nama'        => set_value('nama'),
+   'barcode'     => set_value('barcode'),
    'ukuran'      => set_value('ukuran'),
    'merk'        => set_value('merk'),
    'gambar'      => set_value('gambar'),
@@ -91,6 +92,7 @@ class Tab_barang extends CI_Controller
    $data = array(
     'kode_group'  => $this->input->post('kode_group', true),
     'nama'        => $this->input->post('nama', true),
+    'barcode'     => $this->input->post('barcode', true),
     'ukuran'      => $this->input->post('ukuran', true),
     'merk'        => $this->input->post('merk', true),
     'gambar'      => 'b_' . time() . '.' . $ext,
@@ -138,6 +140,7 @@ class Tab_barang extends CI_Controller
     'kode_barang' => set_value('kode_barang', $row->kode_barang),
     'kode_group'  => set_value('kode_group', $row->kode_group),
     'nama'        => set_value('nama', $row->nama),
+    'barcode'     => set_value('nama', $row->barcode),
     'ukuran'      => set_value('ukuran', $row->ukuran),
     'merk'        => set_value('merk', $row->merk),
     'gambar'      => set_value('gambar', $row->gambar),
@@ -170,8 +173,9 @@ class Tab_barang extends CI_Controller
     $this->update($this->input->post('kode_barang', true));
    } else {
     $data = array(
-     'kode_group'  => $this->input->post('kode_group', true),
+     //'kode_group'  => $this->input->post('kode_group', true),
      'nama'        => $this->input->post('nama', true),
+     'barcode'     => $this->input->post('barcode', true),
      'ukuran'      => $this->input->post('ukuran', true),
      'merk'        => $this->input->post('merk', true),
      'gambar'      => 'b_' . time() . '.' . $ext,
@@ -204,8 +208,9 @@ class Tab_barang extends CI_Controller
    }
   } else {
    $data = array(
-    'kode_group'  => $this->input->post('kode_group', true),
+    // 'kode_group'  => $this->input->post('kode_group', true),
     'nama'        => $this->input->post('nama', true),
+    'barcode'     => $this->input->post('barcode', true),
     'ukuran'      => $this->input->post('ukuran', true),
     'merk'        => $this->input->post('merk', true),
     'harga'       => $this->input->post('harga', true),

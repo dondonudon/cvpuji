@@ -9,11 +9,18 @@
 
 <table class='table table-bordered'>
 
-	    <tr><td width='200'>Kode Group <?php echo form_error('kode_group') ?></td>
+		<?php
+if (empty($kode_group)) {?>
+			<tr><td width='200'>Kode Group <?php echo form_error('kode_group') ?></td>
 		<td>
 			<?php echo select2_dinamis('kode_group', 'master_group', 'nama_group', 'kode_group', 'Nama Group') ?>
 		</td></tr>
+		<?php }
+//echo $kode_group;
+?>
+
 	    <tr><td width='200'>Nama <?php echo form_error('nama') ?></td><td><input type="text" class="form-control" name="nama" id="nama" placeholder="Nama" value="<?php echo $nama; ?>" /></td></tr>
+		<tr><td width='200'>Barcode <?php echo form_error('barcode') ?></td><td><input type="text" class="form-control" name="barcode" id="barcode" placeholder="Barcode" value="<?php echo $barcode; ?>" /></td></tr>
 	    <tr><td width='200'>Ukuran <?php echo form_error('ukuran') ?></td><td><input type="text" class="form-control" name="ukuran" id="ukuran" placeholder="Ukuran" value="<?php echo $ukuran; ?>" /></td></tr>
 	    <tr><td width='200'>Merk <?php echo form_error('merk') ?></td><td><input type="text" class="form-control" name="merk" id="merk" placeholder="Merk" value="<?php echo $merk; ?>" /></td></tr>
 		<?php if ($gambar == "") {?>

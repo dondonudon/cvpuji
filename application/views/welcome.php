@@ -10,8 +10,13 @@
 
         <div class="box-body">
         <div style="padding-bottom: 10px;">
-            <form id="form-filter" class="form-horizontal">
-
+            <div id="form-filter" class="form-horizontal">
+                        <!-- <div class="form-group">
+                            <label for="FirstName" class="col-sm-2 control-label">Kasir</label>
+                            <div class="col-sm-4">
+                                <input type="date" class="input-tanggal" id="tgl_b">
+                            </div>
+                        </div> -->
                         <div class="form-group">
                             <label for="FirstName" class="col-sm-2 control-label">Tanggal Awal</label>
                             <div class="col-sm-4">
@@ -28,17 +33,24 @@
                             <label for="LastName" class="col-sm-2 control-label"></label>
                             <div class="col-sm-4">
                                 <button type="button" id="btn-filter" class="btn btn-primary">Filter</button>
-                                <button type="button" id="btn-reset" class="btn btn-default">Reset</button>
+                                <!-- <button type="button" id="btn-reset" class="btn btn-default">Reset</button> -->
                             </div>
                         </div>
-                    </form>
+                    </div>
         </div>
+        <form action="<?php base_url();?>welcome/excel" method="post">
+        <input type="hidden" name="tanggal_a" id="tanggal_a" >
+        <input type="hidden" name="tanggal_b" id="tanggal_b" >
+        <button type="submit" class="btn btn-success">Export</button>
+        </form><br>
         <table id="table" class="table table-striped table-bordered" cellspacing="0" width="100%">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Kasir</th>
+                    <th>Notrans</th>
+                    <!-- <th>Kasir</th> -->
                     <th>Jumlah</th>
+                    <th>Laba</th>
                     <th>Tanggal</th>
                     <th>Action</th>
                 </tr>
@@ -46,9 +58,22 @@
             <tbody>
             </tbody>
             <tfoot>
-            <th></th><th></th><th></th><th></th><th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
             </tfoot>
         </table>
+        <!-- <table id="footer"  class="table table-striped table-bordered" cellspacing="0" s>
+            <tr>
+                <td width="150"></td>
+                <td width="200"></td>
+                <td width="220">9,999,999,999</td>
+                <td width="200">9,999,999,999</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table> -->
         </div>
                     </div>
             </div>
@@ -67,7 +92,7 @@
 
             //datatables
             table = $('#table').DataTable({
-                "footerCallback": function ( row, data, start, end, display ) {
+                "footerCallback": function ( row, data, start, end, data ) {
                 var numFormat = $.fn.dataTable.render.number( '\,', '.', 0 ).display;
                 var api = this.api(), data;
 
@@ -87,13 +112,22 @@
                         return intVal(a) + intVal(b);
                     }, 0 );
 
+                var jumlahLaba = api
+                .column( 3 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
 
                 $( api.column( 2 ).footer() ).html(numFormat(jumlahSemua));
+                $( api.column( 3 ).footer() ).html(numFormat(jumlahLaba));
                 },
 
                 "processing": true, //Feature control the processing indicator.
                 "serverSide": true, //Feature control DataTables' server-side processing mode.
                 "order": [], //Initial no order.
+                "paging":false, //disable paging
 
                 // Load data for the table's content from an Ajax source
                 "ajax": {
@@ -102,6 +136,12 @@
                     "data": function ( data ) {
                         data.tgl_a = $('#tgl_a').val();
                         data.tgl_b = $('#tgl_b').val();
+                        // alert($('#tgl_a').val());
+                        $("#tanggal_a").val($('#tgl_a').val());
+                        $("#tanggal_b").val($('#tgl_b').val());
+
+
+                        //console.log(tgl_a);
                     }
                 },
 
@@ -118,10 +158,10 @@
             $('#btn-filter').click(function(){ //button filter event click
                 table.ajax.reload();  //just reload table
             });
-            $('#btn-reset').click(function(){ //button reset event click
-                $('#form-filter')[0].reset();
-                table.ajax.reload();  //just reload table
-            });
+            // $('#btn-reset').click(function(){ //button reset event click
+            //     $('#form-filter')[0].reset();
+            //     table.ajax.reload();  //just reload table
+            // });
 
         });
 

@@ -18,6 +18,7 @@
                     <th width="30px">No</th>
 		    <th>Group</th>
 		    <th>Nama</th>
+            <th>barcode</th>
 		    <th>Ukuran</th>
 		    <th>Merk</th>
 		    <!-- <th>Gambar</th> -->
@@ -81,7 +82,7 @@
                         {
                             "data": "kode_barang",
                             "orderable": false
-                        },{"data": "nama_group"},{"data": "nama"},{"data": "ukuran"},{"data": "merk"},
+                        },{"data": "nama_group"},{"data": "nama"},{"data": "barcode"},{"data": "ukuran"},{"data": "merk"},
                         {"data": "harga",render: $.fn.dataTable.render.number(',', '.', 0, '') },
                         {"data": "harga_kasir",render: $.fn.dataTable.render.number(',', '.', 0, '') },{"data": "stok"},{"data": "keterangan"},
                         {

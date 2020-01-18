@@ -12,50 +12,50 @@ class Mutasi_model extends CI_Model
   $tgl_b = $tgl['tgl_b'] . " 23:59:59";
 
   return $this->db->query("SELECT kode_barang,nama,ifnull((select sum(qty) from log where datetime<'$tgl_a' and kode_barang=A.kode_barang and tipe='A'),0) as saldoAwal,masuk,(keluar-retur) as keluar,masuk+retur - keluar as akhir,datetime
-  FROM
-    (
-    SELECT
-        log.kode_barang,
-        tab_barang.nama,
+                            FROM
+                              (
+                              SELECT
+                                  log.kode_barang,
+                                  tab_barang.nama,
 
-        SUM(IF(log.tipe = 'A', log.qty, 0)) as masuk,
-        SUM(IF(log.tipe = 'B', log.qty, 0)) as keluar,
-        SUM(IF(log.tipe = 'D', log.qty, 0)) as retur,
-        log.datetime
-    FROM
-        log
-        INNER JOIN tab_barang ON tab_barang.kode_barang = log.kode_barang
-    WHERE
-      log.datetime BETWEEN '$tgl_a' AND '$tgl_b'
-    GROUP BY
-      log.kode_barang
-        ORDER BY log.datetime
-  ) A")->result();
+                                  SUM(IF(log.tipe = 'A', log.qty, 0)) as masuk,
+                                  SUM(IF(log.tipe = 'B', log.qty, 0)) as keluar,
+                                  SUM(IF(log.tipe = 'D', log.qty, 0)) as retur,
+                                  log.datetime
+                              FROM
+                                  log
+                                  INNER JOIN tab_barang ON tab_barang.kode_barang = log.kode_barang
+                              WHERE
+                                log.datetime BETWEEN '$tgl_a' AND '$tgl_b'
+                              GROUP BY
+                                log.kode_barang
+                                  ORDER BY log.datetime
+                            ) A")->result();
+ }
 
-  // return $this->db->query("SELECT kode_barang,nama,ifnull((select sum(qty) from log where datetime<'$tgl_a' and kode_barang=A.kode_barang and tipe='A'),0) as saldoAwal,masuk,(keluar-retur) as keluar,(select sum(qty) from log where datetime<=A.datetime and kode_barang=A.kode_barang and tipe='A') - (keluar - retur) as akhir,datetime
-  // FROM
-  //   (
-  //   SELECT
-  //       log.kode_barang,
-  //       tab_barang.nama,
+ public function excel($tanggal_a, $tanggal_b)
+ {
+  $query = $this->db->query("SELECT kode_barang,nama,ifnull((select sum(qty) from log where datetime<'$tanggal_a' and kode_barang=A.kode_barang and tipe='A'),0) as saldoAwal,masuk,(keluar-retur) as keluar,masuk+retur - keluar as akhir,datetime
+                              FROM
+                                (
+                                SELECT
+                                    log.kode_barang,
+                                    tab_barang.nama,
 
-  //       SUM(IF(log.tipe = 'A', log.qty, 0)) as masuk,
-  //       SUM(IF(log.tipe = 'B', log.qty, 0)) as keluar,
-  //       SUM(IF(log.tipe = 'D', log.qty, 0)) as retur,
-  //       log.datetime
-  //   FROM
-  //       log
-  //       INNER JOIN tab_barang ON tab_barang.kode_barang = log.kode_barang
-  //   WHERE
-  //     log.datetime BETWEEN '$tgl_a' AND '$tgl_b'
-  //   GROUP BY
-  //     log.kode_barang
-  //       ORDER BY log.datetime
-  // ) A")->result();
-  // $this->db->where('datetime >=', $tgl_a); // Tambahkan where tanggal nya
-  // $this->db->where('datetime <=', $tgl_b); // Tambahkan where tanggal nya
-
-  // Tampilkan data transaksi sesuai tanggal yang diinput oleh user pada filter
+                                    SUM(IF(log.tipe = 'A', log.qty, 0)) as masuk,
+                                    SUM(IF(log.tipe = 'B', log.qty, 0)) as keluar,
+                                    SUM(IF(log.tipe = 'D', log.qty, 0)) as retur,
+                                    log.datetime
+                                FROM
+                                    log
+                                    INNER JOIN tab_barang ON tab_barang.kode_barang = log.kode_barang
+                                WHERE
+                                  log.datetime BETWEEN '$tanggal_a' AND '$tanggal_b'
+                                GROUP BY
+                                  log.kode_barang
+                                    ORDER BY log.datetime
+                              ) A");
+  return $query->result();
  }
 
  public function view_all()

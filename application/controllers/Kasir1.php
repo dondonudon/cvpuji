@@ -68,7 +68,9 @@ class Kasir1 extends CI_Controller
    'kode_m_kasir' => $this->input->post('kode_m_kasir', true),
    'qty'          => $this->input->post('qty', true),
    'harga'        => $this->input->post('harga', true),
+   'hpp'          => $this->input->post('hpp', true),
    'jumlah'       => $this->input->post('jumlah', true),
+   'jumlah_hpp'   => $this->input->post('hpp', true) * $this->input->post('qty', true),
    'datetime'     => date('Y-m-d H:i:s'),
   );
 
@@ -80,24 +82,61 @@ class Kasir1 extends CI_Controller
 
  public function json()
  {
-  $data = array(
+  // $data = $this->Stock_opname_model->barang_list();
+  // echo json_encode($data);
+
+  $data1 = array(
    'kode_m_kasir' => $this->kode_m_kasir,
   );
-  header('Content-Type: application/json');
-  echo $this->Kasir_model->json($data);
+
+  $data = $this->Kasir_model->json($data1);
+  echo json_encode($data);
+
+ }
+
+ public function update()
+ {
+  $qty  = $this->input->post('value');
+  $data = array(
+   $this->input->post('table_column') => $this->input->post('value'),
+  );
+
+  $id_trans = $this->input->post('id_trans');
+
+  // get kode barang
+  $query       = $this->db->query("SELECT kode_barang FROM temp_trans WHERE id_trans = '$id_trans'")->row();
+  $kode_barang = $query->kode_barang;
+
+  //get stok
+  $query = $this->db->query("SELECT stock_m_kasir.kode_barang, stock_m_kasir.stok FROM stock_m_kasir INNER JOIN temp_trans ON stock_m_kasir.kode_barang = temp_trans.kode_barang WHERE stock_m_kasir.kode_barang = '$kode_barang'")->row();
+  $stok  = $query->stok;
+
+  if ($stok > $qty) {
+   $this->Kasir_model->update($data, $id_trans);
+  } else {
+   $data = 'Stok tidak cukup';
+   $this->session->set_flashdata('error', 'Stok tidak cukup');
+  }
+
+ }
+
+ public function delete()
+ {
+  $this->Kasir_model->delete($this->input->post('id'));
  }
 
  public function insert_trans()
  {
   $kode_m_kasir = $this->input->post('kode_m_kasir');
   $notrans      = $this->input->post('notrans');
-  $this->Kasir_model->insert_trans($kode_m_kasir);
-  $this->print($notrans);
+  $bayar        = $this->input->post('bayar');
+  $this->Kasir_model->insert_trans($kode_m_kasir, $notrans);
+  $this->print($notrans, $bayar);
   $this->session->set_flashdata('message', 'Create Record Success 2');
 //   redirect(base_url('kasir1'));
  }
 
- function print($notrans) {
+ function print($notrans, $bayar) {
   date_default_timezone_set('Asia/Bangkok');
   $pdf = new FPDF('P', 'mm', array(58, 100));
   // membuat halaman baru
@@ -108,11 +147,14 @@ class Kasir1 extends CI_Controller
   $toko         = $query->row();
   $kode_m_kasir = $toko->kode_m_kasir;
   $query        = $this->db->query("SELECT * FROM master_kasir WHERE kode_m_kasir = '$kode_m_kasir'");
+  $query2       = $this->db->query("SELECT * FROM trans WHERE notrans = '$notrans'");
   $ret          = $query->row();
+  $ret2         = $query2->row();
   $nama_kasir   = $ret->nama;
   $alamat       = $ret->alamat;
   $kota         = $ret->kota;
   $telp         = $ret->telp;
+  $datetime     = $ret2->datetime;
 
   //GET DATA
   $trans = $this->db->query("SELECT
@@ -138,6 +180,7 @@ class Kasir1 extends CI_Controller
   $pdf->Cell(0, 4, $telp, 0, 1, 'C');
   $pdf->Cell(0, 4, $kota, 0, 1, 'C');
   $pdf->SetFont('Helvetica', '', 6);
+  $pdf->Cell(0, 7, $datetime, 0, 0, 'L');
   $pdf->Cell(0, 7, $notrans, 0, 1, 'R');
   $pdf->Line(1, 26, 55, 26);
   $pdf->SetFont('Helvetica', '', 10);
@@ -155,6 +198,11 @@ class Kasir1 extends CI_Controller
   $pdf->Ln();
   $pdf->Cell(40, 4, 'Jumlah', 0, 0);
   $pdf->Cell(10, 4, number_format($sum), 0, 1);
+  $pdf->Cell(40, 4, 'Bayar', 0, 0);
+  $pdf->Cell(10, 4, number_format($bayar), 0, 1);
+  $kembalian = $bayar - $sum;
+  $pdf->Cell(40, 4, 'Kembalian', 0, 0);
+  $pdf->Cell(10, 4, number_format($kembalian), 0, 1);
   $pdf->Ln();
   $pdf->MultiCell(0, 5, 'Terima kasih sudah belanja di ' . $nama_kasir . '.', 0, 'C');
   $pdf->Cell(40, 3, 'Semoga hari anda menyenangkan.', 0, 'C');
@@ -164,30 +212,7 @@ class Kasir1 extends CI_Controller
   redirect(base_url('kasir1'));
  }
 
- public function _print($notrans)
- {
-  $query        = $this->db->query("SELECT kode_m_kasir FROM trans WHERE notrans = '$notrans' ");
-  $toko         = $query->row();
-  $kode_m_kasir = $toko->kode_m_kasir;
-  $query        = $this->db->query("SELECT * FROM master_kasir WHERE kode_m_kasir = '$kode_m_kasir'");
-  $ret          = $query->row();
-  $nama_kasir   = $ret->nama;
-  $alamat       = $ret->alamat;
-  $kota         = $ret->kota;
-  $telp         = $ret->telp;
-
-  $data = array(
-   'kode_m_kasir' => $kode_m_kasir,
-   'notrans'      => $notrans,
-   'nama_kasir'   => $nama_kasir,
-   'alamat'       => $alamat,
-   'kota'         => $kota,
-   'telp'         => $telp,
-  );
-  $this->load->view('kasir/kasir1/print', $data);
- }
-
- public function delete($id)
+ public function _delete($id)
  {
   $row = $this->Kasir_model->get_by_id($id);
 
@@ -208,6 +233,30 @@ class Kasir1 extends CI_Controller
   $qty         = $this->input->post('qty');
 //   $kode_m_kasir = $this->input->post('kode_m_kasir');
   $data = $this->Kasir_model->get_harga($qty, $kode_barang);
+  echo json_encode($data);
+ }
+
+ public function get_barcode()
+ {
+
+  $barcode      = $this->input->post('barcode');
+  $kode_m_kasir = $this->input->post('kode_m_kasir');
+  $notrans      = $this->input->post('notrans');
+  $data         = $this->Kasir_model->get_barcode($barcode, $kode_m_kasir, $notrans);
+  echo json_encode($data);
+ }
+
+ public function hapus_barang()
+ {
+  $id_trans = $this->input->post('id_trans');
+  $data     = $this->Kasir_model->hapus_barang($id_trans);
+  echo json_encode($data);
+ }
+
+ public function get_barang()
+ {
+  $id_trans = $this->input->get('id');
+  $data     = $this->Kasir_model->get_barang_by_kode($id_trans);
   echo json_encode($data);
  }
 

@@ -23,6 +23,7 @@ class Kasir_stock_model extends CI_Model
   $this->datatables->select('master_kasir.nama as nama_kasir, tab_barang.nama as nama, stock_m_kasir.id as id,stock_m_kasir.kode_m_kasir as kode_m_kasir,stock_m_kasir.kode_barang as kode_barang,stock_m_kasir.stok as stok,stock_m_kasir.datetime as datetime');
   $this->datatables->from('stock_m_kasir');
   //$this->datatables->where('kode_m_kasir',1);
+  $this->datatables->where('stock_m_kasir.stok <>', 0);
   //add this line for join
   $this->datatables->join('tab_barang', 'stock_m_kasir.kode_barang = tab_barang.kode_barang');
   $this->datatables->join('master_kasir', 'master_kasir.kode_m_kasir = stock_m_kasir.kode_m_kasir');
@@ -37,6 +38,21 @@ class Kasir_stock_model extends CI_Model
  {
   $this->db->order_by($this->id, $this->order);
   return $this->db->get($this->table)->result();
+ }
+
+ // Excel
+ public function excel()
+ {
+  $query = $this->db->query("SELECT
+                                master_kasir.nama as nama_kasir,
+                                tab_barang.nama as nama_barang,
+                                stock_m_kasir.kode_m_kasir,
+                                stock_m_kasir.kode_barang,
+                                stock_m_kasir.stok
+                                FROM stock_m_kasir
+                                INNER JOIN tab_barang ON stock_m_kasir.kode_barang = tab_barang.kode_barang
+                                INNER JOIN master_kasir ON stock_m_kasir.kode_m_kasir = master_kasir.kode_m_kasir");
+  return $query->result();
  }
 
  // get data by id

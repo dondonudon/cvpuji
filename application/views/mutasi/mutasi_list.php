@@ -23,13 +23,22 @@
             <input type="date" name="tanggal_b" class="input-tanggal" />
             <br /><br />
         </div>
-
-
-
         <button type="submit">Tampilkan</button>
         <a href="<?php echo base_url(); ?>mutasi">Reset Filter</a>
     </form>
-
+<br><br>
+<?php
+if (isset($_POST['tanggal_a']) && isset($_POST['tanggal_b'])) {
+ $tanggal_a = $_POST['tanggal_a'];
+ $tanggal_b = $_POST['tanggal_b'];
+ ?>
+<form action="<?php base_url();?>excel" method="post" >
+<input type="hidden" name="tanggal_a" id="tanggal_a" value="<?php echo $tanggal_a; ?>">
+<input type="hidden" name="tanggal_b" id="tanggal_b" value="<?php echo $tanggal_b; ?>">
+<button type="submit" class="btn btn-success">Export</button>
+</form>
+<?php }
+?>
 
     <!-- <b><?php echo $ket; ?></b><br /><br /> -->
     <!-- <a href="<?php echo $url_cetak; ?>">CETAK PDF</a><br /><br /> -->

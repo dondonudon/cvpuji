@@ -11,8 +11,8 @@ class Trans_model extends CI_Model
  public $id    = 'id_trans';
 
  //var $table = 'customers';
- public $column_order  = array(null, 'notrans', 'datetime'); //set column field database for datatable orderable
- public $column_search = array('notrans', 'datetime'); //set column field database for datatable searchable
+ public $column_order  = array('trans.notrans,trans.datetime'); //set column field database for datatable orderable
+ public $column_search = array('trans.notrans,trans.datetime'); //set column field database for datatable searchable
  //var $order = array('id' => 'asc'); // default order
  //public $order = 'DESC';
 
@@ -35,7 +35,7 @@ class Trans_model extends CI_Model
   }
 
   $this->db->from($this->table);
-  $this->db->join('master_kasir', 'master_kasir.kode_m_kasir = trans.kode_m_kasir');
+  //$this->db->join('master_kasir', 'master_kasir.kode_m_kasir = trans.kode_m_kasir');
   //$this->db->join('tab_barang', 'tab_barang.kode_barang = trans_detail.kode_barang');
   $i = 0;
 
@@ -93,6 +93,17 @@ class Trans_model extends CI_Model
  {
   $this->db->from($this->table);
   return $this->db->count_all_results();
+ }
+ public function excel($tanggal_a, $tanggal_b)
+ {
+  $tgl_a = $tanggal_a . " 00:00:00";
+  $tgl_b = $tanggal_b . " 23:59:59";
+  if (empty($tanggal_a) || empty($tanggal_b)) {
+   $query = $this->db->query("SELECT master_kasir.nama, trans.notrans, trans.kode_m_kasir, trans.jumlah, trans.jumlah_hpp,trans.datetime FROM trans INNER JOIN master_kasir ON master_kasir.kode_m_kasir = trans.kode_m_kasir ");
+  } else {
+   $query = $this->db->query("SELECT master_kasir.nama, trans.notrans, trans.kode_m_kasir, trans.jumlah, trans.jumlah_hpp,trans.datetime FROM trans INNER JOIN master_kasir ON master_kasir.kode_m_kasir = trans.kode_m_kasir WHERE trans.datetime BETWEEN '$tgl_a' AND '$tgl_b' ");
+  }
+  return $query->result();
  }
 
 }

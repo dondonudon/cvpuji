@@ -1,6 +1,6 @@
-    <?php $this->load->view('kasir/kasir1/_partial/head')?>
+<?php $this->load->view('kasir/kasir1/_partial/head')?>
             <!-- content -->
-            <font size="4">
+
             <div class="content-wrapper">
             <section class="content">
                 <div class="row">
@@ -9,6 +9,7 @@
 
                             <div class="box-header">
                                 <h3 class="box-title">TRANSAKSI</h3>
+                                <button type="button" class="btn btn-primary" style="float: right;" onclick="window.location.href = '<?php base_url();?>kasir1/group';">MANUAL</button>
                             </div>
 
                 <div class="box-body">
@@ -28,45 +29,51 @@
                 <?php $notrans = $kode_m_kasir . "" . notrans();?>
                 <td>
                 <?php echo $notrans; ?></td>
+                <td>Barcode</td>
+                <td><input type="hidden" name="kode_m_kasir" id="kode_m_kasir" value="<?php echo $kode_m_kasir; ?>">
+                <input type="text" name="barcode" id="barcode" autofocus></td>
+
+
 
             </tr>
+            </table>
 
-                <table class="table table-bordered table-striped" id="mytable">
-            <thead>
-                <tr>
-                    <th width="30px">No</th>
-		    <th>Notrans</th>
-		    <th>Nama Barang</th>
-		    <th>Qty</th>
-		    <th>Harga</th>
-            <th class="sum">Jumlah</th>
-		    <th width="200px">Action</th>
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <th></th><th></th><th></th><th></th><th></th><th></th><th></th>
-                </tr>
-            </tfoot>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <!-- <th>a</th> -->
+                        <th>Notrans</th>
+                        <th>Nama Barang</th>
+                        <th>QTY</th>
+                        <th>Harga</th>
+                        <th>Jumlah</th>
+                        <th style="text-align: center;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="show_data">
+                </tbody>
+                <tfoot></tfoot>
+            </table>
 
-        </table>
 
-                <form name="form" id="form" action ="<?php base_url('');?>kasir1/insert_trans" method="post" target="_blank">
+                <form name="form" id="form" action ="<?php base_url();?>kasir1/insert_trans" method="post" target="_blank">
+                Bayar &nbsp; &nbsp; &nbsp;
+                <input type="text" name="bayar" id="bayar" min="0" required onclick="show_easy_numpad_bayar(this);">
                 <input type="hidden" name="kode_m_kasir" value="<?php echo $kode_m_kasir; ?>" />
                 <input type="hidden" id="notrans" name="notrans" value="<?php echo $notrans; ?>">
+                <br><br>
                 <table>
                     <tr>
-                        <td width="200px">
+                        <!-- <td width="200px">
                             <input type="button" class="btn btn-block btn-warning btn-lg" onclick="location.href='<?php base_url();?>kasir1/group';" value="JUAL" />
                         </td>
-                        <td>&nbsp;&nbsp;&nbsp;</td>
+                        <td>&nbsp;&nbsp;&nbsp;</td> -->
                         <td width="200px">
                             <!-- <input type="submit" target="_blank" class="btn btn-block btn-success btn-lg" value="SAVE" /> -->
 
-                            <!-- <button type="submit" class="btn btn-block btn-success btn-lg" value="SIMPAN">SIMPAN</button> -->
-                            <!-- <a type="submit" class="btn btn-block btn-success btn-lg" href="<?php base_url() . 'kasir1/print/' . $notrans;?>"  onclick="document.getElementById('form').submit()">SAVE</a> -->
-                            <button type="submit" class="btn btn-block btn-success btn-lg" onclick="myFunction()">SIMPAN</button>
-                            <!-- <button type="submit" class="btn btn-block btn-success btn-lg" target="_blank">SIMPAN</button> -->
+
+                            <button type="button" class="btn btn-block btn-success btn-lg" onclick="reload()">SIMPAN</button>
+
 
                         </td>
                     </tr>
@@ -84,91 +91,179 @@
         <script src="<?php echo base_url('assets/datatables/jquery.dataTables.js') ?>"></script>
         <script src="<?php echo base_url('assets/datatables/dataTables.bootstrap.js') ?>"></script>
         <script>
-        function myFunction() {
-            location.reload();
-        }
+            function reload() {
+                var bayar  = parseInt($("#bayar").val());
+                var sum = parseInt($("#sum").val());
+                if (sum==0) {
+                    alert('Silahkan Lakukan Transaksi');
+                    return false;
+                }else if (bayar < sum) {
+                    alert ('Kurang Bayar');
+                    return false;
+                } else if (bayar >= sum){
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                    $("#form").submit();
+                    return true;
+                }
+
+            }
         </script>
+
         <script type="text/javascript">
             $(document).ready(function() {
-                $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings)
-                {
-                    return {
-                        "iStart": oSettings._iDisplayStart,
-                        "iEnd": oSettings.fnDisplayEnd(),
-                        "iLength": oSettings._iDisplayLength,
-                        "iTotal": oSettings.fnRecordsTotal(),
-                        "iFilteredTotal": oSettings.fnRecordsDisplay(),
-                        "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
-                        "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
-                    };
-                };
+                load_data();
 
-                var t = $("#mytable").dataTable({
-                "footerCallback": function ( row, data, start, end, display ) {
-                var numFormat = $.fn.dataTable.render.number( '\,', '.', 0 ).display;
-                var api = this.api(), data;
+                // FUNCTION UPDATE
 
-                // converting to interger to find total
-                var intVal = function ( i ) {
-                    return typeof i === 'string' ?
-                        i.replace(/Rp |,/g, '')*1 :
-                        typeof i === 'number' ?
-                            i : 0;
-                };
+                $(document).on('change', '.table_data', function(){
 
-                // computing column Total the complete result
-                var jumlahSemua = api
-                    .column( 5 )
-                    .data()
-                    .reduce( function (a, b) {
-                        return intVal(a) + intVal(b);
-                    }, 0 );
+                    var id_trans = $(this).data('row_id');
+                    var table_column = $(this).data('column_name');
+                    var value = $(this).val();
+                    $.ajax({
+                    url:"<?php echo base_url(); ?>kasir1/update",
+                    method:"POST",
+                    data:{id_trans:id_trans, table_column:table_column, value:value},
+                    success:function(data)
+                    {
+                        load_data();
+                    }
+                    });
 
+                });
 
-                $( api.column( 5 ).footer() ).html(numFormat(jumlahSemua));
-                },
-					responsive: true,
-                    initComplete: function() {
-                        var api = this.api();
-                        $('#mytable_filter input')
-                                .off('.DT')
-                                .on('keyup.DT', function(e) {
-                                    if (e.keyCode == 13) {
-                                        api.search(this.value).draw();
-                            }
-                        });
-                    },
-                    oLanguage: {
-                        sProcessing: "loading..."
-                    },
-                    processing: true,
-                    serverSide: true,
-                    ajax: {"url": "kasir1/json", "type": "POST"},
-                    columns: [
-                        {
-                            "data": "id_trans",
-                            "orderable": false
-                        },{"data": "notrans"},{"data": "nama"},{"data": "qty"},
-                        {"data": "harga",render: $.fn.dataTable.render.number(',', '.', 0, '')},
-                        {"data": "jumlah",render: $.fn.dataTable.render.number(',', '.', 0, '')},
-                        {
-                            "data" : "action",
-                            "orderable": false,
-                            "className" : "text-center"
+                // $(document).on('blur', '.table_data', function(){
+                //     var id_trans = $(this).data('row_id');
+                //     var table_column = $(this).data('column_name');
+                //     var value = $(this).text();
+                //     $.ajax({
+                //     url:"<?php echo base_url(); ?>kasir1/update",
+                //     method:"POST",
+                //     data:{id_trans:id_trans, table_column:table_column, value:value},
+                //     success:function(data)
+                //     {
+                //         load_data();
+                //     }
+                //     })
+                // });
+                //END FUNCTION UPDATE
+
+                // FUNCTION DELETE
+                $(document).on('click', '.btn_delete', function(){
+                    var id = $(this).attr('id');
+                    if(confirm("Are you sure you want to delete this?"))
+                    {
+                    $.ajax({
+                        url:"<?php echo base_url(); ?>kasir1/delete",
+                        method:"POST",
+                        data:{id:id},
+                        success:function(data){
+                        load_data();
                         }
-                    ],
-                    order: [[0, 'desc']],
-                    rowCallback: function(row, data, iDisplayIndex) {
-                        var info = this.fnPagingInfo();
-                        var page = info.iPage;
-                        var length = info.iLength;
-                        var index = page * length + (iDisplayIndex + 1);
-                        $('td:eq(0)', row).html(index);
+                    })
                     }
                 });
+                //END FUNCTION DELETE
+
+                //GET BARCODE
+                $('#barcode').on('change',function(){
+
+                var kode_m_kasir    =$("#kode_m_kasir").val();
+                var notrans         =$("#notrans").val();
+                var barcode         =$(this).val();
+                $.ajax({
+                    type : "POST",
+                    url  : "<?php echo base_url('kasir' . $kode_m_kasir . '/get_barcode') ?>",
+                    dataType : "JSON",
+                    data : {barcode,kode_m_kasir,notrans},
+                    cache:false,
+                    success: function(data){
+                        $('[name="barcode"]').val('');
+                        load_data();
+                    }
+
+                });
+                    return false;
+                });
+                //END GET BARCODE
             });
+
+            //FUNCTION LOAD
+            function load_data()
+                {
+                    $.ajax({
+                    url:"<?php echo base_url(); ?>kasir1/json",
+                    dataType:"JSON",
+                    success:function(data){
+                    var sum = 0;
+                    var numFormat = $.fn.dataTable.render.number( '\,', '.', 0 ).display;
+                    var html = '<tr hidden>';
+                    html += '<td hidden id="first_name" contenteditable placeholder="Enter First Name"></td>';
+                    html += '<td hidden id="last_name" contenteditable placeholder="Enter Last Name"></td>';
+                    html += '<td hidden id="age" contenteditable></td>';
+                    html += '<td hidden id="age" contenteditable></td>';
+                    html += '<td hidden id="age" contenteditable></td>';
+                    html += '<td hidden><button type="button" name="btn_add" id="btn_add" class="btn btn-xs btn-success"><span class="glyphicon glyphicon-plus"></span></button></td></tr>';
+
+
+                    for(var i = 0; i < data.length; i++)
+                    {
+                    html += '<tr>';
+                    html += '<td class="table_data" data-row_id="'+data[i].id_trans+'" data-column_name="notrans" >'+data[i].notrans+'</td>';
+                    html += '<td class="table_data" data-row_id="'+data[i].id_trans+'" data-column_name="nama" >'+data[i].nama+'</td>';
+                    html += '<td ><input class="table_data" data-row_id="'+data[i].id_trans+'" data-column_name="qty" id="table_data'+data[i].id_trans+'" placeholder="'+data[i].qty+'" size="2" max="9999" min="0" onclick="show_easy_numpad(this);"></td>';
+                    // html += '<td class="table_data" data-row_id="'+data[i].id_trans+'" data-column_name="qty" contenteditable>'+data[i].qty+'</td>';
+                    html += '<td class="table_data" data-row_id="'+data[i].id_trans+'" data-column_name="harga" >'+numFormat(data[i].harga)+'</td>';
+                    html += '<td class="jumlah" data-row_id="'+data[i].id_trans+'" data-column_name="jumlah" >'+numFormat(data[i].jumlah)+'</td>';
+                    // html += '<td><button type="button" name="delete_btn" id="'+data[i].id_trans+'" class="btn btn-xs btn-success btn_edit"><span class="glyphicon glyphicon-pencil"></span></button>';
+                    html += '<td><button type="button" name="delete_btn" id="'+data[i].id_trans+'" class="btn btn-xs btn-danger btn_delete"><span class="glyphicon glyphicon-remove"></span></button></td></tr>';
+
+                    sum += parseInt(data[i].jumlah);
+                    //console.log(sum);
+
+                    }
+
+                    html += '<tr>';
+                    html += '<td colspan="3"></td>';
+                    html += '<td>Jumlah</td>';
+                    html += '<td>'+numFormat(sum)+'</td>';
+                    html += '<input type="hidden" id="sum" value = "'+sum+'">';
+                    html += '</tr>';
+
+
+                    $('#show_data').html(html);
+                    //$('#footer').html(footer);
+                    }
+                    });
+
+                }
+            //END FUNCTION LOAD
+
+            function countHrg(id) {
+                var id_trans = $("#"+id).data('row_id');
+                var table_column = $("#"+id).data('column_name');
+                var value = $("#"+id).val();
+                $.ajax({
+                    url:"<?php echo base_url(); ?>kasir1/update",
+                    method:"POST",
+                    data:{id_trans:id_trans, table_column:table_column, value:value},
+                    success:function(data)
+                    {
+                        load_data();
+                    }
+                });
+            }
+        </script>
+        <script type="text/javascript">
+            <?php if ($this->session->flashdata('success')) {?>
+                alert("<?php echo $this->session->flashdata('success'); ?>");
+            <?php } else if ($this->session->flashdata('error')) {?>
+                alert("<?php echo $this->session->flashdata('error'); ?>");
+            <?php }?>
         </script>
 
-            </font>
+
             <!-- /.content-wrapper -->
             <?php $this->load->view('kasir/kasir1/_partial/footer')?>

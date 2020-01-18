@@ -115,24 +115,41 @@ class Master_stok_kasir_model extends CI_Model
  //get stok
  public function get_stok($kode_m_kasir, $kode_barang)
  {
+  //$hsl1 = $this->db->query("SELECT ifnull(stok,0) as stok_gudang FROM tab_barang WHERE kode_barang='$kode_barang'");
+
   $hsl = $this->db->query("SELECT
-                                ifnull(stok,0) as stok
+                            IFNULL(stock_m_kasir.stok, 0) AS stok
                             FROM
-                                stock_m_kasir
+                            stock_m_kasir
                             WHERE
-                                kode_m_kasir = '$kode_m_kasir' AND kode_barang='$kode_barang'");
+                            stock_m_kasir.kode_m_kasir = '$kode_m_kasir' AND stock_m_kasir.kode_barang = '$kode_barang'");
   if ($hsl->num_rows() > 0) {
    foreach ($hsl->result() as $data) {
     $hasil = array(
      'stok' => $data->stok,
     );
+    $hsl1 = $this->db->query("SELECT ifnull(stok,0) as stok_gudang FROM tab_barang WHERE kode_barang='$kode_barang'")->result();
+    foreach ($hsl1 as $data1) {
+     $hasil1 = array(
+      'stok_gudang' => $data1->stok_gudang,
+     );
+     $hasil_baru = array_merge($hasil, $hasil1);
+    }
+
    }
   } else {
    $hasil = array(
     'stok' => 0,
    );
+   $hsl1 = $this->db->query("SELECT ifnull(stok,0) as stok_gudang FROM tab_barang WHERE kode_barang='$kode_barang'")->result();
+   foreach ($hsl1 as $data1) {
+    $hasil1 = array(
+     'stok_gudang' => $data1->stok_gudang,
+    );
+    $hasil_baru = array_merge($hasil, $hasil1);
+   }
   }
-  return $hasil;
+  return $hasil_baru;
  }
 
  // delete data
@@ -219,6 +236,18 @@ class Master_stok_kasir_model extends CI_Model
    $this->db->query("INSERT INTO log (ket, kode_m_kasir, kode_barang, qty, tipe, datetime) VALUES ('$ket', '$kode_m_kasir', '$kode_barang', '$qty', 'B', '$datetime')");
   }
   //END INSERT LOG
+
+  //UPDATE STOK BARANG
+  $barang = $this->db->query("SELECT * FROM tab_barang WHERE kode_barang IN (SELECT kode_barang FROM master_stok_kasir_detail WHERE nostokkasir = '$notrans')")->result_array();
+  foreach ($barang as $data2) {
+   $kode_barang = $data2['kode_barang'];
+   $_stok       = $data2['stok'];
+   $stockopname = $this->db->query("SELECT nostokkasir, kode_barang, stok FROM master_stok_kasir_detail WHERE nostokkasir = '$notrans' AND kode_barang = '$kode_barang'")->row();
+
+   $stok_akhir = $_stok - $stockopname->stok;
+   $this->db->query("UPDATE tab_barang SET stok = '$stok_akhir' WHERE kode_barang = $kode_barang");
+  }
+  //UPDATE STOK BARANG
 
   //UPDATE COUNTER C
   $query    = $this->db->query("SELECT counter FROM counter WHERE id='C'");

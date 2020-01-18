@@ -85,10 +85,15 @@ class Tab_pricelist extends CI_Controller
     ));
     $index++;
    }
-
-   $this->Tab_pricelist_model->insert($data);
-   $this->session->set_flashdata('message', 'Create Record Success 2');
-   redirect(site_url('tab_pricelist'));
+   $query = $this->db->query("SELECT kode_barang FROM tab_pricelist WHERE kode_barang = '$kode_barang'");
+   if ($query->num_rows() == 0) {
+    $this->Tab_pricelist_model->insert($data);
+    $this->session->set_flashdata('message', 'Create Record Success 2');
+    redirect(site_url('tab_pricelist'));
+   } else {
+    $this->session->set_flashdata('error', 'Data sudah terinput, silahkan lakukan update');
+    redirect(site_url('tab_pricelist'));
+   }
   }
  }
 
@@ -111,7 +116,7 @@ class Tab_pricelist extends CI_Controller
     'opsi4'        => set_value('opsi4', $row->opsi4),
     'opsi5'        => set_value('opsi5', $row->opsi5),
    );
-   $this->template->load('template', 'tab_pricelist/tab_pricelist_form', $data);
+   $this->template->load('template', 'tab_pricelist/tab_pricelist_read', $data);
   } else {
    $this->session->set_flashdata('message', 'Record Not Found');
    redirect(site_url('tab_pricelist'));
@@ -125,20 +130,29 @@ class Tab_pricelist extends CI_Controller
   if ($this->form_validation->run() == false) {
    $this->update($this->input->post('id_pricelist', true));
   } else {
-   $data = array(
-    'kode_kasir'  => $this->input->post('kode_kasir', true),
-    'kode_barang' => $this->input->post('kode_barang', true),
-    'harga'       => $this->input->post('harga', true),
-    'keterangan'  => $this->input->post('keterangan', true),
-    'opsi1'       => $this->input->post('opsi1', true),
-    'opsi2'       => $this->input->post('opsi2', true),
-    'opsi3'       => $this->input->post('opsi3', true),
-    'opsi4'       => $this->input->post('opsi4', true),
-    'opsi5'       => $this->input->post('opsi5', true),
-    'datetime'    => date('Y-m-d H:i:s'),
-   );
+   $id_pricelist = $_POST['id_pricelist'];
+   $kode_barang  = $_POST['kode_barang'];
+   $kode_kasir   = $_POST['kode_kasir'];
+   $harga        = $_POST['harga'];
+   $datetime     = date('Y-m-d H:i:s');
 
-   $this->Tab_pricelist_model->update($this->input->post('id_pricelist', true), $data);
+   $data = array();
+
+   $index = 0;
+   // Set index array awal dengan 0
+   foreach ($kode_kasir as $kasir) { // Kita buat perulangan berdasarkan nis sampai data terakhir
+    array_push($data, array(
+     'id_pricelist' => $id_pricelist[$index],
+     'kode_kasir'   => $kode_kasir[$index], // Ambil dan set data nama sesuai index array dari $index
+     'harga'        => $harga[$index], // Ambil dan set data telepon sesuai index array dari $index
+     'datetime'     => $datetime, // Ambil dan set data alamat sesuai index array dari $index
+    ));
+    $index++;
+   }
+   //  var_dump($data);
+   //  var_dump($id_pricelist);
+   $this->Tab_pricelist_model->update($data);
+
    $this->session->set_flashdata('message', 'Update Record Success');
    redirect(site_url('tab_pricelist'));
   }

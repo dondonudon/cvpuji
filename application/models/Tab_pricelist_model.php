@@ -24,9 +24,9 @@ class Tab_pricelist_model extends CI_Model
   //add this line for join
   $this->datatables->join('tab_barang', 'tab_pricelist.kode_barang = tab_barang.kode_barang');
   $this->datatables->join('tab_kasir', 'tab_pricelist.kode_kasir = tab_kasir.kode_kasir');
-  $this->datatables->add_column('action', anchor(site_url('tab_pricelist/read/$1'), '<i class="fa fa-eye" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm')) . "
-            " . anchor(site_url('tab_pricelist/update/$1'), '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm')) . "
-                " . anchor(site_url('tab_pricelist/delete/$1'), '<i class="fa fa-trash-o" aria-hidden="true"></i>', 'class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'id_pricelist');
+  $this->datatables->group_by('tab_barang.kode_barang');
+  $this->datatables->add_column('action', anchor(site_url('tab_pricelist/update/$1'), '<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm')) . "
+                " . anchor(site_url('tab_pricelist/delete/$1'), '<i class="fa fa-trash-o" aria-hidden="true"></i>', 'class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'kode_barang');
   return $this->datatables->generate();
  }
 
@@ -40,7 +40,7 @@ class Tab_pricelist_model extends CI_Model
  // get data by id
  public function get_by_id($id)
  {
-  $this->db->where($this->id, $id);
+  $this->db->where('kode_barang', $id);
   return $this->db->get($this->table)->row();
  }
 
@@ -86,10 +86,10 @@ class Tab_pricelist_model extends CI_Model
  }
 
  // update data
- public function update($id, $data)
+ public function update($data)
  {
-  $this->db->where($this->id, $id);
-  $this->db->update($this->table, $data);
+  //$this->db->where('kode_barang', $id);
+  $this->db->update_batch($this->table, $data, 'id_pricelist');
  }
 
  // delete data

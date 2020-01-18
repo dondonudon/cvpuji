@@ -200,8 +200,6 @@ class Retur_kasir_model extends CI_Model
      $this->db->query("UPDATE stock_m_kasir SET stok='$stokAkhir' WHERE kode_barang = '$kode_barang' AND kode_m_kasir='$kode_m_kasir'");
     }
    }
-  } else {
-   $this->db->query("INSERT INTO stock_m_kasir (kode_m_kasir,kode_barang,stok,datetime) SELECT '$kode_m_kasir',kode_barang,stok,datetime FROM temp_master_stok_kasir  WHERE nostokkasir = '$notrans' ");
   }
   // END UPDATE STOK
 
@@ -222,6 +220,18 @@ class Retur_kasir_model extends CI_Model
    $this->db->query("INSERT INTO log (ket, kode_m_kasir, kode_barang, qty, tipe, datetime) VALUES ('$ket', '$kode_m_kasir', '$kode_barang', '$qty', 'D', '$datetime')");
   }
   //END INSERT LOG
+
+  //UPDATE STOK BARANG
+  $barang = $this->db->query("SELECT * FROM tab_barang WHERE kode_barang IN (SELECT kode_barang FROM master_stok_kasir_detail WHERE nostokkasir = '$notrans')")->result_array();
+  foreach ($barang as $data2) {
+   $kode_barang = $data2['kode_barang'];
+   $_stok       = $data2['stok'];
+   $stockopname = $this->db->query("SELECT nostokkasir, kode_barang, stok FROM master_stok_kasir_detail WHERE nostokkasir = '$notrans' AND kode_barang = '$kode_barang'")->row();
+
+   $stok_akhir = $_stok + $stockopname->stok;
+   $this->db->query("UPDATE tab_barang SET stok = '$stok_akhir' WHERE kode_barang = $kode_barang");
+  }
+  //UPDATE STOK BARANG
 
   //UPDATE COUNTER D
   $query    = $this->db->query("SELECT counter FROM counter WHERE id='D'");

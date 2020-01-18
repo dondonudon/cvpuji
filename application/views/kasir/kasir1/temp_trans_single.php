@@ -65,12 +65,14 @@ foreach ($query->result() as $row) {
                     <div class="col-xs-12">
                         <label for="inputlg">Jumlah</label>
                         <input class="form-control input-lg" name="jumlah" id="jumlah" type="text" readonly>
+
                     </div>
             </td>
             </tr>
             <tr><td> &nbsp;&nbsp; </td></tr>
             <tr>
             <td colspan="5" align="right" >
+            <input type="hidden" name="hpp" id="hpp" type="text">
             <input type="hidden" id="kode_barang" name="kode_barang" value="<?php echo $kode_barang; ?>" />
             <input type="hidden" id="kode_m_kasir" name="kode_m_kasir" value="<?php echo $kode_m_kasir; ?>" />
             <input type="hidden" id="notrans" name="notrans" value="<?php echo $kode_m_kasir . "" . notrans(); ?>" />
@@ -131,8 +133,10 @@ foreach ($query->result() as $row) {
                 success: function(data){
                     $.each(data,function(qty,kode_barang,kode_m_kasir){
                         $('[name="harga"]').val(data.harga);
+                        $('[name="hpp"]').val(data.hpp);
                         var qty     =$("#qty").val();
                         var harga   =$("#harga").val();
+
                         var jumlah  = qty * harga;
                         $("#jumlah").val(jumlah);
                     });

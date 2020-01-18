@@ -31,6 +31,10 @@
         <link href="<?php echo base_url() ?>assets/js-numpad/numpad.css" rel="stylesheet">
         <script src="<?php echo base_url() ?>assets/js-numpad/numpad.js"></script>
 
+        <link rel="stylesheet" type="text/css" href="<?php echo base_url() ?>assets/js-numpad/easy-numpad.css">
+        <script type="text/javascript" src="<?php echo base_url() ?>assets/js-numpad/easy-numpad.js"></script>
+
+
 
 
 

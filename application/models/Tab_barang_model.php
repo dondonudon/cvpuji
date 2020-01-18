@@ -19,7 +19,7 @@ class Tab_barang_model extends CI_Model
  // datatables
  public function json()
  {
-  $this->datatables->select('master_group.kode_group,master_group.nama_group,tab_barang.kode_barang,tab_barang.kode_group,tab_barang.nama,tab_barang.ukuran,tab_barang.merk,tab_barang.gambar,tab_barang.harga,tab_barang.harga_kasir,tab_barang.stok,tab_barang.keterangan,tab_barang.opsi2,tab_barang.opsi3,tab_barang.opsi4,tab_barang.opsi5');
+  $this->datatables->select('master_group.kode_group,master_group.nama_group,tab_barang.kode_barang,tab_barang.kode_group,tab_barang.barcode,tab_barang.nama,tab_barang.ukuran,tab_barang.merk,tab_barang.gambar,tab_barang.harga,tab_barang.harga_kasir,tab_barang.stok,tab_barang.keterangan,tab_barang.opsi2,tab_barang.opsi3,tab_barang.opsi4,tab_barang.opsi5');
   $this->datatables->from('tab_barang');
   //add this line for join
   $this->datatables->join('master_group', 'tab_barang.kode_group = master_group.kode_group');

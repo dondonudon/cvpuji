@@ -158,6 +158,18 @@ class Stock_opname_model extends CI_Model
   }
   //END INSERT LOG
 
+  //UPDATE STOK BARANG
+  $barang = $this->db->query("SELECT * FROM tab_barang WHERE kode_barang IN (SELECT kode_barang FROM stock_opname_detail WHERE nostockopname = '$notrans')")->result_array();
+  foreach ($barang as $data2) {
+   $kode_barang = $data2['kode_barang'];
+   $_stok       = $data2['stok'];
+   $stockopname = $this->db->query("SELECT nostockopname, kode_barang, stok FROM stock_opname_detail WHERE nostockopname = '$notrans' AND kode_barang = '$kode_barang'")->row();
+
+   $stok_akhir = $_stok + $stockopname->stok;
+   $this->db->query("UPDATE tab_barang SET stok = '$stok_akhir' WHERE kode_barang = $kode_barang");
+  }
+  //UPDATE STOK BARANG
+
   //UPDATE COUNTER B
   $query    = $this->db->query("SELECT counter FROM counter WHERE id='B'");
   $ret      = $query->row();

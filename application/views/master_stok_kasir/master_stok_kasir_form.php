@@ -65,6 +65,13 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="control-label col-xs-3" >Stok Gudang</label>
+                        <div class="col-xs-9">
+							<input type="text" class="form-control" name="stok_gudang" id="stok_gudang" placeholder="" readonly/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="control-label col-xs-3" >Current Stok</label>
                         <div class="col-xs-9">
 							<input type="text" class="form-control" name="current_stok" id="current_stok" placeholder="" readonly/>
@@ -226,8 +233,15 @@
 		//Simpan Barang
 		$('#btn_simpan').on('click',function(){
 			var kode_barang		= $('#kode_barang').val();
-            var stok			= $('#stok').val();
+            var stok			= parseInt($('#stok').val());
 			var nostokkasir		= $('#nostokkasir').val();
+            var stok_gudang     = parseInt($('#stok_gudang').val());
+
+            if (stok_gudang<stok) {
+                alert("SALDO KURANG");
+                return false;
+            }else{
+
             $.ajax({
                 type : "POST",
                 url  : "<?php echo base_url('master_stok_kasir/simpan_barang') ?>",
@@ -241,6 +255,7 @@
                 }
             });
             return false;
+        }
         });
 
         //Update Barang
@@ -299,6 +314,7 @@
                     success: function(data){
                         $.each(data,function(kode_m_kasir,kode_barang){
 							$('[name="current_stok"]').val(data.stok);
+                            $('[name="stok_gudang"]').val(data.stok_gudang);
                         });
                     }
                 });
