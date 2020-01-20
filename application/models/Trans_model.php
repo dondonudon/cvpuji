@@ -11,7 +11,7 @@ class Trans_model extends CI_Model
  public $id    = 'id_trans';
 
  //var $table = 'customers';
- public $column_order  = array('trans.notrans,trans.datetime'); //set column field database for datatable orderable
+ public $column_order  = array('trans.datetime'); //set column field database for datatable orderable
  public $column_search = array('trans.notrans,trans.datetime'); //set column field database for datatable searchable
  //var $order = array('id' => 'asc'); // default order
  //public $order = 'DESC';
