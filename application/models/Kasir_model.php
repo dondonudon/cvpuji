@@ -144,8 +144,14 @@ class Kasir_model extends CI_Model
                             WHERE
                               tab_barang.barcode = '$barcode'");
   $query = $hsl->row();
-  $stok  = $query->stok;
-  if ($hsl->num_rows() > 0 && $stok > 0) {
+  //$stok  = $query->stok;
+  $count = $hsl->num_rows();
+
+  if ($count = 0) {
+   $hasil = array(
+    'message' => false,
+   );
+  } elseif ($hsl->num_rows() > 0 && $query->stok > 0) {
    foreach ($hsl->result() as $data) {
     $hasil = array(
      'kode_barang' => $data->kode_barang,
