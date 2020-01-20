@@ -58,7 +58,7 @@
 
                 <form name="form" id="form" action ="<?php base_url();?>kasir1/insert_trans" method="post" target="_blank">
                 Bayar &nbsp; &nbsp; &nbsp;
-                <input type="text" name="bayar" id="bayar" min="0" required onclick="show_easy_numpad_bayar(this);">
+                <input type="text" name="bayar" id="bayar" min="0" readonly onclick="show_easy_numpad_bayar(this);">
                 <input type="hidden" name="kode_m_kasir" value="<?php echo $kode_m_kasir; ?>" />
                 <input type="hidden" id="notrans" name="notrans" value="<?php echo $notrans; ?>">
                 <br><br>
@@ -213,7 +213,7 @@
                     html += '<tr>';
                     html += '<td class="table_data" data-row_id="'+data[i].id_trans+'" data-column_name="notrans" >'+data[i].notrans+'</td>';
                     html += '<td class="table_data" data-row_id="'+data[i].id_trans+'" data-column_name="nama" >'+data[i].nama+'</td>';
-                    html += '<td ><input class="table_data" data-row_id="'+data[i].id_trans+'" data-column_name="qty" id="table_data'+data[i].id_trans+'" placeholder="'+data[i].qty+'" size="2" max="9999" min="0" onclick="show_easy_numpad(this);"></td>';
+                    html += '<td ><input class="table_data" data-row_id="'+data[i].id_trans+'" data-column_name="qty" id="table_data'+data[i].id_trans+'" placeholder="'+data[i].qty+'" size="2" max="9999" min="0" onclick="show_easy_numpad(this);" readonly></td>';
                     // html += '<td class="table_data" data-row_id="'+data[i].id_trans+'" data-column_name="qty" contenteditable>'+data[i].qty+'</td>';
                     html += '<td class="table_data" data-row_id="'+data[i].id_trans+'" data-column_name="harga" >'+numFormat(data[i].harga)+'</td>';
                     html += '<td class="jumlah" data-row_id="'+data[i].id_trans+'" data-column_name="jumlah" >'+numFormat(data[i].jumlah)+'</td>';
