@@ -18,8 +18,6 @@
 
             <table class='table table-bordered'>
             <tr>
-                <!-- <td>Customer</td>
-                <td colspan="2"><?php echo select2_dinamis('id_customer', 'master_customer', 'nama', 'id_customer', 'Nama Customer') ?></td> -->
                 <td>Tipe Customer</td>
                 <td>
                     <input id="tipe-cust" type="checkbox" data-onstyle="primary" data-on="Agen"  data-off="Umum" data-toggle="toggle" data-size="normal" value="get_barcode">
@@ -181,6 +179,7 @@
                      $('#judul-transaksi').text("TRANSAKSI UMUM");
                      document.getElementById("judul-transaksi").style.color = "white";
                     document.getElementById("judul-transaksi").style.fontWeight = "500";
+                    $('#tipe-agen').prop('checked', false).change()
                     document.getElementById("tipe-agen").disabled = true;
                      $('#tipe-cust').val("get_barcode");
                     }
