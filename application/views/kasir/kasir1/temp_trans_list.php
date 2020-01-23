@@ -128,6 +128,7 @@
 
                     var id_trans = $(this).data('row_id');
                     var table_column = $(this).data('column_name');
+                    var checkbox        =$('#tipe-cust').val();
                     var value = $(this).val();
                     $.ajax({
                     url:"<?php echo base_url(); ?>kasir1/update",
@@ -280,9 +281,10 @@
             function countHrg(id) {
                 var id_trans = $("#"+id).data('row_id');
                 var table_column = $("#"+id).data('column_name');
+                var checkbox        =$('#tipe-cust').val();
                 var value = $("#"+id).val();
                 $.ajax({
-                    url:"<?php echo base_url(); ?>kasir1/update",
+                    url:"<?php echo base_url(); ?>kasir1/update_"+checkbox,
                     method:"POST",
                     data:{id_trans:id_trans, table_column:table_column, value:value},
                     success:function(data)

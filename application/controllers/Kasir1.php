@@ -95,7 +95,7 @@ class Kasir1 extends CI_Controller
 
  }
 
- public function update()
+ public function update_get_barcode()
  {
   $qty  = $this->input->post('value');
   $data = array(
@@ -113,7 +113,59 @@ class Kasir1 extends CI_Controller
   $stok  = $query->stok;
 
   if ($stok > $qty) {
-   $this->Kasir_model->update($data, $id_trans);
+   $this->Kasir_model->update_get_barcode($data, $id_trans);
+  } else {
+   $data = 'Stok tidak cukup';
+   $this->session->set_flashdata('error', 'Stok tidak cukup');
+  }
+
+ }
+
+ public function update_get_barcode_agenBesar()
+ {
+  $qty  = $this->input->post('value');
+  $data = array(
+   $this->input->post('table_column') => $this->input->post('value'),
+  );
+
+  $id_trans = $this->input->post('id_trans');
+
+  // get kode barang
+  $query       = $this->db->query("SELECT kode_barang FROM temp_trans WHERE id_trans = '$id_trans'")->row();
+  $kode_barang = $query->kode_barang;
+
+  //get stok
+  $query = $this->db->query("SELECT stock_m_kasir.kode_barang, stock_m_kasir.stok FROM stock_m_kasir INNER JOIN temp_trans ON stock_m_kasir.kode_barang = temp_trans.kode_barang WHERE stock_m_kasir.kode_barang = '$kode_barang'")->row();
+  $stok  = $query->stok;
+
+  if ($stok > $qty) {
+   $this->Kasir_model->update_get_barcode_agenBesar($data, $id_trans);
+  } else {
+   $data = 'Stok tidak cukup';
+   $this->session->set_flashdata('error', 'Stok tidak cukup');
+  }
+
+ }
+
+ public function update_get_barcode_agenKecil()
+ {
+  $qty  = $this->input->post('value');
+  $data = array(
+   $this->input->post('table_column') => $this->input->post('value'),
+  );
+
+  $id_trans = $this->input->post('id_trans');
+
+  // get kode barang
+  $query       = $this->db->query("SELECT kode_barang FROM temp_trans WHERE id_trans = '$id_trans'")->row();
+  $kode_barang = $query->kode_barang;
+
+  //get stok
+  $query = $this->db->query("SELECT stock_m_kasir.kode_barang, stock_m_kasir.stok FROM stock_m_kasir INNER JOIN temp_trans ON stock_m_kasir.kode_barang = temp_trans.kode_barang WHERE stock_m_kasir.kode_barang = '$kode_barang'")->row();
+  $stok  = $query->stok;
+
+  if ($stok > $qty) {
+   $this->Kasir_model->update_get_barcode_agenKecil($data, $id_trans);
   } else {
    $data = 'Stok tidak cukup';
    $this->session->set_flashdata('error', 'Stok tidak cukup');

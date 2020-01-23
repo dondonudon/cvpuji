@@ -80,7 +80,7 @@ class Kasir_model extends CI_Model
   $this->db->delete($this->table);
  }
 
- public function update($data, $id)
+ public function update_get_barcode($data, $id)
  {
   $this->db->where('id_trans', $id);
   $this->db->update('temp_trans', $data);
@@ -95,7 +95,61 @@ class Kasir_model extends CI_Model
                             tab_pricelist.kode_barang = tab_barang.kode_barang
                           WHERE
                             tab_pricelist.kode_barang = (SELECT kode_barang FROM temp_trans WHERE id_trans = '$id')
-                            AND $qty BETWEEN tab_kasir.qty_a AND tab_kasir.qty_b")->result();
+                            AND $qty BETWEEN tab_kasir.qty_a AND tab_kasir.qty_b AND (tab_kasir.kode_kasir <> 12 AND tab_kasir.kode_kasir <> 13)")->result();
+  foreach ($hsl as $data) {
+   $hasil = array(
+    'harga' => $data->harga,
+    'hpp'   => $data->hpp,
+   );
+
+   $this->db->query("UPDATE temp_trans SET harga ='$hasil[harga]', hpp = '$hasil[hpp]', jumlah = '$hasil[harga]'*'$qty', jumlah_hpp = '$hasil[hpp]'*'$qty' WHERE id_trans = '$id'");
+  }
+
+ }
+
+ public function update_get_barcode_agenBesar($data, $id)
+ {
+  $this->db->where('id_trans', $id);
+  $this->db->update('temp_trans', $data);
+  $qty = $data['qty'];
+  $hsl = $this->db->query("SELECT
+                            tab_pricelist.harga, tab_barang.harga_kasir as hpp
+                          FROM
+                            tab_pricelist
+                          INNER JOIN tab_kasir ON
+                            tab_kasir.kode_kasir = tab_pricelist.kode_kasir
+                          INNER JOIN tab_barang ON
+                            tab_pricelist.kode_barang = tab_barang.kode_barang
+                          WHERE
+                            tab_pricelist.kode_barang = (SELECT kode_barang FROM temp_trans WHERE id_trans = '$id')
+                            AND tab_kasir.kode_kasir = 12")->result();
+  foreach ($hsl as $data) {
+   $hasil = array(
+    'harga' => $data->harga,
+    'hpp'   => $data->hpp,
+   );
+
+   $this->db->query("UPDATE temp_trans SET harga ='$hasil[harga]', hpp = '$hasil[hpp]', jumlah = '$hasil[harga]'*'$qty', jumlah_hpp = '$hasil[hpp]'*'$qty' WHERE id_trans = '$id'");
+  }
+
+ }
+
+ public function update_get_barcode_agenKecil($data, $id)
+ {
+  $this->db->where('id_trans', $id);
+  $this->db->update('temp_trans', $data);
+  $qty = $data['qty'];
+  $hsl = $this->db->query("SELECT
+                            tab_pricelist.harga, tab_barang.harga_kasir as hpp
+                          FROM
+                            tab_pricelist
+                          INNER JOIN tab_kasir ON
+                            tab_kasir.kode_kasir = tab_pricelist.kode_kasir
+                          INNER JOIN tab_barang ON
+                            tab_pricelist.kode_barang = tab_barang.kode_barang
+                          WHERE
+                            tab_pricelist.kode_barang = (SELECT kode_barang FROM temp_trans WHERE id_trans = '$id')
+                            AND tab_kasir.kode_kasir = 13")->result();
   foreach ($hsl as $data) {
    $hasil = array(
     'harga' => $data->harga,
