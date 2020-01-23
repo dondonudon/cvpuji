@@ -176,12 +176,12 @@
                     document.getElementById("tipe-agen").disabled = false;
                     $('#tipe-cust').val("get_barcode_agenKecil");
                    } else {
-                     $('#judul-transaksi').text("TRANSAKSI UMUM");
-                     document.getElementById("judul-transaksi").style.color = "white";
+                    $('#tipe-agen').prop('checked', false).change();
+                    $('#judul-transaksi').text("TRANSAKSI UMUM");
+                    document.getElementById("judul-transaksi").style.color = "white";
                     document.getElementById("judul-transaksi").style.fontWeight = "500";
-                    $('#tipe-agen').prop('checked', false).change()
                     document.getElementById("tipe-agen").disabled = true;
-                     $('#tipe-cust').val("get_barcode");
+                    $('#tipe-cust').val("get_barcode");
                     }
                 }
                 );
