@@ -124,7 +124,63 @@ class Kasir_model extends CI_Model
                             tab_pricelist.kode_barang = tab_barang.kode_barang
                           WHERE
                             tab_pricelist.kode_barang = '$kode_barang'
-                            AND $qty BETWEEN tab_kasir.qty_a AND tab_kasir.qty_b");
+                            AND $qty BETWEEN tab_kasir.qty_a AND tab_kasir.qty_b AND (tab_kasir.kode_kasir <> 12 AND tab_kasir.kode_kasir <> 13)");
+  if ($hsl->num_rows() > 0) {
+   foreach ($hsl->result() as $data) {
+    $hasil = array(
+     'harga' => $data->harga,
+     'hpp'   => $data->hpp,
+    );
+   }
+  }
+  return $hasil;
+ }
+
+ public function get_harga_agenBesar($qty, $kode_barang)
+ {
+  // $a          = $this->db->query("SELECT kode_kasir FROM master_kasir WHERE kode_m_kasir = '$kode_m_kasir' ");
+  // $ret        = $a->row();
+  // $kode_kasir = $ret->kode_kasir;
+
+  $hsl = $this->db->query("SELECT
+                            tab_pricelist.harga, tab_barang.harga_kasir as hpp
+                          FROM
+                            tab_pricelist
+                          INNER JOIN tab_kasir ON
+                            tab_kasir.kode_kasir = tab_pricelist.kode_kasir
+                          INNER JOIN tab_barang ON
+                            tab_pricelist.kode_barang = tab_barang.kode_barang
+                          WHERE
+                            tab_pricelist.kode_barang = '$kode_barang'
+                            AND $qty BETWEEN tab_kasir.qty_a AND tab_kasir.qty_b AND tab_kasir.kode_kasir = 12");
+  if ($hsl->num_rows() > 0) {
+   foreach ($hsl->result() as $data) {
+    $hasil = array(
+     'harga' => $data->harga,
+     'hpp'   => $data->hpp,
+    );
+   }
+  }
+  return $hasil;
+ }
+
+ public function get_harga_agenKecil($qty, $kode_barang)
+ {
+  // $a          = $this->db->query("SELECT kode_kasir FROM master_kasir WHERE kode_m_kasir = '$kode_m_kasir' ");
+  // $ret        = $a->row();
+  // $kode_kasir = $ret->kode_kasir;
+
+  $hsl = $this->db->query("SELECT
+                            tab_pricelist.harga, tab_barang.harga_kasir as hpp
+                          FROM
+                            tab_pricelist
+                          INNER JOIN tab_kasir ON
+                            tab_kasir.kode_kasir = tab_pricelist.kode_kasir
+                          INNER JOIN tab_barang ON
+                            tab_pricelist.kode_barang = tab_barang.kode_barang
+                          WHERE
+                            tab_pricelist.kode_barang = '$kode_barang'
+                            AND $qty BETWEEN tab_kasir.qty_a AND tab_kasir.qty_b AND tab_kasir.kode_kasir = 13");
   if ($hsl->num_rows() > 0) {
    foreach ($hsl->result() as $data) {
     $hasil = array(
@@ -168,11 +224,109 @@ class Kasir_model extends CI_Model
                             tab_pricelist.kode_barang = tab_barang.kode_barang
                           WHERE
                             tab_pricelist.kode_barang = '$hasil[kode_barang]'
-                            AND 1 BETWEEN tab_kasir.qty_a AND tab_kasir.qty_b")->result();
+                            AND 1 BETWEEN tab_kasir.qty_a AND tab_kasir.qty_b AND (tab_kasir.kode_kasir <> 12 AND tab_kasir.kode_kasir <> 13) ")->result();
     foreach ($hsl2 as $data2) {
 
-     $this->db->query("INSERT INTO temp_trans (notrans, kode_barang, kode_m_kasir,qty,harga,jumlah,hpp,jumlah_hpp,datetime) VALUES
-                      ('$notrans','$hasil[kode_barang]','$kode_m_kasir',1,'$data2->harga',1*$data2->harga,$data2->hpp,1*$data2->hpp,'$datetime')");
+     $this->db->query("INSERT INTO temp_trans (notrans, kode_barang, kode_m_kasir,qty,harga,jumlah,hpp,jumlah_hpp,agen,datetime) VALUES
+                      ('$notrans','$hasil[kode_barang]','$kode_m_kasir',1,'$data2->harga',1*$data2->harga,$data2->hpp,1*$data2->hpp,0,'$datetime')");
+    }
+
+   }
+  } else {
+   $hasil = array(
+    'message' => false,
+   );
+  }
+  return $hasil;
+
+ }
+
+ public function get_barcode_agenBesar($barcode, $kode_m_kasir, $notrans)
+ {
+  $hsl = $this->db->query("SELECT
+                              stock_m_kasir.kode_barang, stock_m_kasir.stok FROM stock_m_kasir
+                              INNER JOIN tab_barang ON tab_barang.kode_barang = stock_m_kasir.kode_barang
+                            WHERE
+                              tab_barang.barcode = '$barcode'");
+  $query = $hsl->row();
+  //$stok  = $query->stok;
+  $count = $hsl->num_rows();
+
+  if ($count = 0) {
+   $hasil = array(
+    'message' => false,
+   );
+  } elseif ($hsl->num_rows() > 0 && $query->stok > 0) {
+   foreach ($hsl->result() as $data) {
+    $hasil = array(
+     'kode_barang' => $data->kode_barang,
+    );
+    $datetime = date('Y-m-d H:i:s');
+
+    $hsl2 = $this->db->query("SELECT
+                            tab_pricelist.harga, tab_barang.harga_kasir as hpp
+                          FROM
+                            tab_pricelist
+                          INNER JOIN tab_kasir ON
+                            tab_kasir.kode_kasir = tab_pricelist.kode_kasir
+                          INNER JOIN tab_barang ON
+                            tab_pricelist.kode_barang = tab_barang.kode_barang
+                          WHERE
+                            tab_pricelist.kode_barang = '$hasil[kode_barang]'
+                            AND tab_kasir.kode_kasir = 12 ")->result();
+    foreach ($hsl2 as $data2) {
+
+     $this->db->query("INSERT INTO temp_trans (notrans, kode_barang, kode_m_kasir,qty,harga,jumlah,hpp,jumlah_hpp,agen,datetime) VALUES
+                      ('$notrans','$hasil[kode_barang]','$kode_m_kasir',1,'$data2->harga',1*$data2->harga,$data2->hpp,1*$data2->hpp,1,'$datetime')");
+    }
+
+   }
+  } else {
+   $hasil = array(
+    'message' => false,
+   );
+  }
+  return $hasil;
+
+ }
+
+ public function get_barcode_agenKecil($barcode, $kode_m_kasir, $notrans)
+ {
+  $hsl = $this->db->query("SELECT
+                              stock_m_kasir.kode_barang, stock_m_kasir.stok FROM stock_m_kasir
+                              INNER JOIN tab_barang ON tab_barang.kode_barang = stock_m_kasir.kode_barang
+                            WHERE
+                              tab_barang.barcode = '$barcode'");
+  $query = $hsl->row();
+  //$stok  = $query->stok;
+  $count = $hsl->num_rows();
+
+  if ($count = 0) {
+   $hasil = array(
+    'message' => false,
+   );
+  } elseif ($hsl->num_rows() > 0 && $query->stok > 0) {
+   foreach ($hsl->result() as $data) {
+    $hasil = array(
+     'kode_barang' => $data->kode_barang,
+    );
+    $datetime = date('Y-m-d H:i:s');
+
+    $hsl2 = $this->db->query("SELECT
+                            tab_pricelist.harga, tab_barang.harga_kasir as hpp
+                          FROM
+                            tab_pricelist
+                          INNER JOIN tab_kasir ON
+                            tab_kasir.kode_kasir = tab_pricelist.kode_kasir
+                          INNER JOIN tab_barang ON
+                            tab_pricelist.kode_barang = tab_barang.kode_barang
+                          WHERE
+                            tab_pricelist.kode_barang = '$hasil[kode_barang]'
+                            AND tab_kasir.kode_kasir = 13 ")->result();
+    foreach ($hsl2 as $data2) {
+
+     $this->db->query("INSERT INTO temp_trans (notrans, kode_barang, kode_m_kasir,qty,harga,jumlah,hpp,jumlah_hpp,agen,datetime) VALUES
+                      ('$notrans','$hasil[kode_barang]','$kode_m_kasir',1,'$data2->harga',1*$data2->harga,$data2->hpp,1*$data2->hpp,1,'$datetime')");
     }
 
    }
@@ -249,13 +403,21 @@ class Kasir_model extends CI_Model
   $jumlah     = $hasil->jumlah;
   $jumlah_hpp = $hasil->jumlah_hpp;
 
+  $cekagen = $q1->row();
+  $agen    = $cekagen->agen;
+
   if (!empty($notrans) && !empty($datetime)) {
    //insert trans
-   $q4 = $this->db->query("INSERT into trans (notrans,kode_m_kasir,jumlah,jumlah_hpp,datetime) VALUES ('$notrans','$kode_m_kasir',$jumlah,$jumlah_hpp,'$datetime')");
+   if ($agen == 0) {
+    $q4 = $this->db->query("INSERT into trans (notrans,kode_m_kasir,jumlah,jumlah_hpp,agen,datetime) VALUES ('$notrans','$kode_m_kasir',$jumlah,$jumlah_hpp,0,'$datetime')");
+   } elseif ($agen == 1) {
+    $q4 = $this->db->query("INSERT into trans (notrans,kode_m_kasir,jumlah,jumlah_hpp,agen,datetime) VALUES ('$notrans','$kode_m_kasir',$jumlah,$jumlah_hpp,1,'$datetime')");
+   }
+
   }
 
   //insert trans_detail
-  $q5 = $this->db->query("INSERT INTO trans_detail (notrans, kode_barang, kode_m_kasir, qty, harga, hpp, jumlah, jumlah_hpp, datetime) SELECT notrans, kode_barang, kode_m_kasir, qty, harga, hpp, jumlah, jumlah_hpp, datetime FROM temp_trans WHERE kode_m_kasir = '$kode_m_kasir'");
+  $q5 = $this->db->query("INSERT INTO trans_detail (notrans, kode_barang, kode_m_kasir, qty, harga, hpp, jumlah, jumlah_hpp, agen, datetime) SELECT notrans, kode_barang, kode_m_kasir, qty, harga, hpp, jumlah, jumlah_hpp, agen, datetime FROM temp_trans WHERE kode_m_kasir = '$kode_m_kasir'");
   //insert log
   $q6 = $this->db->query("INSERT INTO log (ket, kode_barang, kode_m_kasir, qty, tipe, datetime) SELECT notrans, kode_barang, kode_m_kasir, qty ,'C' AS tipe, datetime FROM temp_trans WHERE kode_m_kasir = '$kode_m_kasir'");
   //delete temp_trans

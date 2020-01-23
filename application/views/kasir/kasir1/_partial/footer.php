@@ -20,10 +20,10 @@
                     <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
                 </ul>
                 <!-- Tab panes -->
-                
+
                     <!-- /.tab-pane -->
                     <!-- Stats tab content -->
-                    
+
                     <!-- /.tab-pane -->
                 </div>
             </aside>
@@ -53,6 +53,9 @@
         <script src="<?php echo base_url() ?>assets/adminlte/dist/js/demo.js"></script>
         <!-- Select2 -->
         <script src="<?php echo base_url() ?>assets/adminlte/bower_components/select2/dist/js/select2.full.min.js"></script>
+        <!-- BOOTSTRAP TOGGLE -->
+        <link href="<?php echo base_url('assets/css/bootstrap-toggle.min.css') ?>" rel="stylesheet">
+        <script src="<?php echo base_url('assets/js/bootstrap-toggle.min.js') ?>"></script>
         <!-- page script -->
         <script>
             $(function () {

@@ -71,6 +71,7 @@ class Kasir1 extends CI_Controller
    'hpp'          => $this->input->post('hpp', true),
    'jumlah'       => $this->input->post('jumlah', true),
    'jumlah_hpp'   => $this->input->post('hpp', true) * $this->input->post('qty', true),
+   'agen'         => $this->input->post('agen', true),
    'datetime'     => date('Y-m-d H:i:s'),
   );
 
@@ -155,6 +156,7 @@ class Kasir1 extends CI_Controller
   $kota         = $ret->kota;
   $telp         = $ret->telp;
   $datetime     = $ret2->datetime;
+  $agen         = $ret2->agen;
 
   //GET DATA
   $trans = $this->db->query("SELECT
@@ -172,6 +174,7 @@ class Kasir1 extends CI_Controller
                             INNER JOIN master_kasir mk on td.kode_m_kasir = mk.kode_m_kasir
                         WHERE
                             td.notrans = '$notrans'")->result_array();
+
   $pdf->SetFont('Helvetica', '', 10);
   $pdf->SetMargins(2, 2, 2, 1);
   $pdf->Ln();
@@ -180,8 +183,14 @@ class Kasir1 extends CI_Controller
   $pdf->Cell(0, 4, $telp, 0, 1, 'C');
   $pdf->Cell(0, 4, $kota, 0, 1, 'C');
   $pdf->SetFont('Helvetica', '', 6);
-  $pdf->Cell(0, 7, $datetime, 0, 0, 'L');
-  $pdf->Cell(0, 7, $notrans, 0, 1, 'R');
+  $pdf->Cell(0, 5, $datetime, 0, 0, 'L');
+  $pdf->Cell(0, 5, $notrans, 0, 1, 'R');
+  $pdf->SetFont('Helvetica', 'I', 6);
+  if ($agen == 0) {
+   $pdf->Cell(0, 3, "CUSTOMER", 0, 1, 'L');
+  } elseif ($agen == 1) {
+   $pdf->Cell(0, 3, "AGEN", 0, 1, 'L');
+  }
   $pdf->Line(1, 26, 55, 26);
   $pdf->SetFont('Helvetica', '', 10);
 
@@ -236,6 +245,24 @@ class Kasir1 extends CI_Controller
   echo json_encode($data);
  }
 
+ public function get_harga_agenBesar()
+ {
+  $kode_barang = $this->input->post('kode_barang');
+  $qty         = $this->input->post('qty');
+//   $kode_m_kasir = $this->input->post('kode_m_kasir');
+  $data = $this->Kasir_model->get_harga_agenBesar($qty, $kode_barang);
+  echo json_encode($data);
+ }
+
+ public function get_harga_agenKecil()
+ {
+  $kode_barang = $this->input->post('kode_barang');
+  $qty         = $this->input->post('qty');
+//   $kode_m_kasir = $this->input->post('kode_m_kasir');
+  $data = $this->Kasir_model->get_harga_agenKecil($qty, $kode_barang);
+  echo json_encode($data);
+ }
+
  public function get_barcode()
  {
 
@@ -243,6 +270,26 @@ class Kasir1 extends CI_Controller
   $kode_m_kasir = $this->input->post('kode_m_kasir');
   $notrans      = $this->input->post('notrans');
   $data         = $this->Kasir_model->get_barcode($barcode, $kode_m_kasir, $notrans);
+  echo json_encode($data);
+ }
+
+ public function get_barcode_agenBesar()
+ {
+
+  $barcode      = $this->input->post('barcode');
+  $kode_m_kasir = $this->input->post('kode_m_kasir');
+  $notrans      = $this->input->post('notrans');
+  $data         = $this->Kasir_model->get_barcode_agenBesar($barcode, $kode_m_kasir, $notrans);
+  echo json_encode($data);
+ }
+
+ public function get_barcode_agenKecil()
+ {
+
+  $barcode      = $this->input->post('barcode');
+  $kode_m_kasir = $this->input->post('kode_m_kasir');
+  $notrans      = $this->input->post('notrans');
+  $data         = $this->Kasir_model->get_barcode_agenKecil($barcode, $kode_m_kasir, $notrans);
   echo json_encode($data);
  }
 

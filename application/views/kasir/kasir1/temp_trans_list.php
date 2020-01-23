@@ -8,7 +8,7 @@
                         <div class="box box-warning box-solid">
 
                             <div class="box-header">
-                                <h3 class="box-title">TRANSAKSI</h3>
+                                <h3 id="judul-transaksi" class="box-title">TRANSAKSI UMUM</h3>
                                 <button type="button" class="btn btn-primary" style="float: right;" onclick="window.location.href = '<?php base_url();?>kasir1/group';">MANUAL</button>
                             </div>
 
@@ -17,7 +17,15 @@
 
 
             <table class='table table-bordered'>
-
+            <tr>
+                <!-- <td>Customer</td>
+                <td colspan="2"><?php echo select2_dinamis('id_customer', 'master_customer', 'nama', 'id_customer', 'Nama Customer') ?></td> -->
+                <td>Tipe Customer</td>
+                <td>
+                    <input id="tipe-cust" type="checkbox" data-onstyle="primary" data-on="Agen"  data-off="Customer" data-toggle="toggle" data-size="normal" value="get_barcode">
+                    <input id="tipe-agen" type="checkbox" data-offstyle="warning" data-onstyle="success" data-on="Agen Besar"  data-off="Agen Kecil" data-toggle="toggle" data-size="normal">
+                </td>
+            </tr>
             <tr>
                 <td>Tanggal</td>
                 <td><?php echo date('Y-m-d'); ?></strong></td>
@@ -113,6 +121,7 @@
 
         <script type="text/javascript">
             $(document).ready(function() {
+
                 load_data();
 
                 // FUNCTION UPDATE
@@ -134,20 +143,6 @@
 
                 });
 
-                // $(document).on('blur', '.table_data', function(){
-                //     var id_trans = $(this).data('row_id');
-                //     var table_column = $(this).data('column_name');
-                //     var value = $(this).text();
-                //     $.ajax({
-                //     url:"<?php echo base_url(); ?>kasir1/update",
-                //     method:"POST",
-                //     data:{id_trans:id_trans, table_column:table_column, value:value},
-                //     success:function(data)
-                //     {
-                //         load_data();
-                //     }
-                //     })
-                // });
                 //END FUNCTION UPDATE
 
                 // FUNCTION DELETE
@@ -167,15 +162,57 @@
                 });
                 //END FUNCTION DELETE
 
+                //DISABLE tipe-agen
+                var tipe_cust = $('#tipe-cust').val()
+                if (tipe_cust="get_barcode") {
+                    document.getElementById("tipe-agen").disabled = true;
+                }
+                //END DISABLE tipe-agen
+
+                //GET CHECKBOX
+                $('#tipe-cust').change(function(){
+                if (this.checked) {
+                    $('#judul-transaksi').text("TRANSAKSI AGEN KECIL");
+                    document.getElementById("judul-transaksi").style.color = "blue";
+                    document.getElementById("judul-transaksi").style.fontWeight = "900";
+                    document.getElementById("tipe-agen").disabled = false;
+                    $('#tipe-cust').val("get_barcode_agenKecil");
+                   } else {
+                     $('#judul-transaksi').text("TRANSAKSI UMUM");
+                     document.getElementById("judul-transaksi").style.color = "white";
+                    document.getElementById("judul-transaksi").style.fontWeight = "500";
+                    document.getElementById("tipe-agen").disabled = true;
+                     $('#tipe-cust').val("get_barcode");
+                    }
+                }
+                );
+
+                $('#tipe-agen').change(function(){
+                if (this.checked) {
+                    $('#judul-transaksi').text("TRANSAKSI AGEN BESAR");
+                    document.getElementById("judul-transaksi").style.color = "blue";
+                    document.getElementById("judul-transaksi").style.fontWeight = "900";
+                    $('#tipe-cust').val("get_barcode_agenBesar");
+                   } else {
+                    $('#judul-transaksi').text("TRANSAKSI AGEN KECIL");
+                    document.getElementById("judul-transaksi").style.color = "blue";
+                    document.getElementById("judul-transaksi").style.fontWeight = "900";
+                     $('#tipe-cust').val("get_barcode_agenKecil");
+                    }
+                }
+                );
+                //END GET CHECKBOX
+
                 //GET BARCODE
                 $('#barcode').on('change',function(){
 
                 var kode_m_kasir    =$("#kode_m_kasir").val();
                 var notrans         =$("#notrans").val();
+                var checkbox        =$('#tipe-cust').val();
                 var barcode         =$(this).val();
                 $.ajax({
                     type : "POST",
-                    url  : "<?php echo base_url('kasir' . $kode_m_kasir . '/get_barcode') ?>",
+                    url  : "<?php echo base_url() ?>kasir<?php echo $kode_m_kasir ?>/"+checkbox,
                     dataType : "JSON",
                     data : {barcode,kode_m_kasir,notrans},
                     cache:false,

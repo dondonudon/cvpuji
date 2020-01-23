@@ -11,7 +11,7 @@ $kode_barang = $this->uri->segment(3);?>
                         <div class="box box-warning box-solid">
 
                             <div class="box-header">
-                                <h3 class="box-title">TRANSAKSI</h3>
+                                <h3 id="judul-transaksi" class="box-title">TRANSAKSI UMUM</h3>
                             </div>
 
                 <div class="box-body">
@@ -44,7 +44,9 @@ foreach ($query->result() as $row) {
                         <label for="inputlg">QTY</label>
                         <input class="form-control input-lg" name="qty" id="qty" type="text" required >
                     </div>
-                </td>
+            </td>
+            <td><input id="tipe-cust" type="checkbox" data-onstyle="primary" data-on="Agen"  data-off="Customer" data-toggle="toggle" data-size="normal" value="get_harga">
+            </td>
             </tr>
             <tr>
             <td>Nama Barang</td>
@@ -56,6 +58,7 @@ foreach ($query->result() as $row) {
                         <input class="form-control input-lg" name="harga" id="harga" type="text" readonly>
                     </div>
             </td>
+            <td><input id="tipe-agen" type="checkbox" data-offstyle="warning" data-onstyle="success" data-on="Agen Besar"  data-off="Agen Kecil" data-toggle="toggle" data-size="normal"></td>
             </tr>
             <tr>
             <td>Stok</td>
@@ -71,8 +74,9 @@ foreach ($query->result() as $row) {
             </tr>
             <tr><td> &nbsp;&nbsp; </td></tr>
             <tr>
-            <td colspan="5" align="right" >
+            <td colspan="6" align="right" >
             <input type="hidden" name="hpp" id="hpp" type="text">
+            <input type="hidden" name="agen" id="agen" type="text">
             <input type="hidden" id="kode_barang" name="kode_barang" value="<?php echo $kode_barang; ?>" />
             <input type="hidden" id="kode_m_kasir" name="kode_m_kasir" value="<?php echo $kode_m_kasir; ?>" />
             <input type="hidden" id="notrans" name="notrans" value="<?php echo $kode_m_kasir . "" . notrans(); ?>" />
@@ -83,8 +87,6 @@ foreach ($query->result() as $row) {
             </tr>
             </table>
             </form>
-
-
                 </div>
                             </div>
                     </div>
@@ -109,6 +111,51 @@ foreach ($query->result() as $row) {
 
     <script type="text/javascript">
 		$(document).ready(function(){
+            //DISABLE tipe-agen
+        var tipe_cust = $('#tipe-cust').val()
+        if (tipe_cust="get_harga") {
+            document.getElementById("tipe-agen").disabled = true;
+        }
+        //END DISABLE tipe-agen
+
+        //GET CHECKBOX
+        $('#tipe-cust').change(function(){
+        if (this.checked) {
+            $('#judul-transaksi').text("TRANSAKSI AGEN KECIL");
+            $('#agen').val("1");
+            document.getElementById("judul-transaksi").style.color = "blue";
+            document.getElementById("judul-transaksi").style.fontWeight = "900";
+            document.getElementById("tipe-agen").disabled = false;
+            $('#tipe-cust').val("get_harga_agenKecil");
+            } else {
+            $('#judul-transaksi').text("TRANSAKSI UMUM");
+            $('#agen').val("0");
+            document.getElementById("judul-transaksi").style.color = "white";
+            document.getElementById("judul-transaksi").style.fontWeight = "500";
+            document.getElementById("tipe-agen").disabled = true;
+            $('#tipe-cust').val("get_harga");
+            }
+        }
+        );
+
+        $('#tipe-agen').change(function(){
+        if (this.checked) {
+            $('#judul-transaksi').text("TRANSAKSI AGEN BESAR");
+            $('#agen').val("1");
+            document.getElementById("judul-transaksi").style.color = "blue";
+            document.getElementById("judul-transaksi").style.fontWeight = "900";
+            $('#tipe-cust').val("get_harga_agenBesar");
+            } else {
+            $('#judul-transaksi').text("TRANSAKSI AGEN KECIL");
+            $('#agen').val("1");
+            document.getElementById("judul-transaksi").style.color = "blue";
+            document.getElementById("judul-transaksi").style.fontWeight = "900";
+                $('#tipe-cust').val("get_harga_agenKecil");
+            }
+        }
+        );
+        //END GET CHECKBOX
+
             //NUMPAD
             window.addEventListener("load", function(){
                 // Bare minimum - provide the IDready
@@ -121,12 +168,13 @@ foreach ($query->result() as $row) {
         });
 
         function countHrg(){
-            var kode_barang=$("#kode_barang").val();
-            var kode_m_kasir=$("#kode_m_kasir").val();
+            var kode_barang     =$("#kode_barang").val();
+            var kode_m_kasir    =$("#kode_m_kasir").val();
+            var checkbox        =$('#tipe-cust').val();
             var qty=$("#qty").val();
             $.ajax({
                 type : "POST",
-                url  : "<?php echo site_url('kasir1/get_harga'); ?>",
+                url  : "<?php echo site_url(); ?>kasir1/"+checkbox,
                 dataType : "JSON",
                 data : {qty,kode_barang,kode_m_kasir},
                 cache:false,
