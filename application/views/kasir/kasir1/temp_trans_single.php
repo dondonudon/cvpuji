@@ -45,7 +45,7 @@ foreach ($query->result() as $row) {
                         <input class="form-control input-lg" name="qty" id="qty" type="text" required >
                     </div>
             </td>
-            <td><input id="tipe-cust" type="checkbox" data-onstyle="primary" data-on="Agen"  data-off="Customer" data-toggle="toggle" data-size="normal" value="get_harga">
+            <td><input id="tipe-cust" type="checkbox" data-onstyle="primary" data-on="Agen"  data-off="Umum" data-toggle="toggle" data-size="normal" value="get_harga">
             </td>
             </tr>
             <tr>

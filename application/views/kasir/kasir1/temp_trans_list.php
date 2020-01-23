@@ -22,7 +22,7 @@
                 <td colspan="2"><?php echo select2_dinamis('id_customer', 'master_customer', 'nama', 'id_customer', 'Nama Customer') ?></td> -->
                 <td>Tipe Customer</td>
                 <td>
-                    <input id="tipe-cust" type="checkbox" data-onstyle="primary" data-on="Agen"  data-off="Customer" data-toggle="toggle" data-size="normal" value="get_barcode">
+                    <input id="tipe-cust" type="checkbox" data-onstyle="primary" data-on="Agen"  data-off="Umum" data-toggle="toggle" data-size="normal" value="get_barcode">
                     <input id="tipe-agen" type="checkbox" data-offstyle="warning" data-onstyle="success" data-on="Agen Besar"  data-off="Agen Kecil" data-toggle="toggle" data-size="normal">
                 </td>
             </tr>
