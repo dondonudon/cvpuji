@@ -4,14 +4,17 @@ let _maxValue = null;
 let _isInRange = true;
 
 function show_easy_numpad_bayar(thisElement) {
+    onload = kembali();
     $("#wadah").val(thisElement);
+    //alert(sum.value);
     let easy_numpad = document.createElement("div");
     easy_numpad.id = "easy-numpad-frame";
     easy_numpad.className = "easy-numpad-frame";
     easy_numpad.innerHTML = `
     <div class="easy-numpad-container">
         <div class="easy-numpad-output-container">
-            <p class="easy-numpad-output" id="easy-numpad-output"></p>
+            <p class="easy-numpad-output-kembali" id="easy-numpad-output1"></p>
+            <p class="easy-numpad-output-bayar" id="easy-numpad-output"></p>
         </div>
         <div class="easy-numpad-number-container">
             <table>
@@ -37,7 +40,7 @@ function show_easy_numpad_bayar(thisElement) {
                     <td><a href="000" onclick="easynum(this)">000</a></td>
                     <td><a href="00" onclick="easynum(this)">00</a></td>
                     <td ><a href="0"onclick="easynum(this)">0</a></td>
-                    <td><a href="Done" class="done" id="done" onclick="easy_numpad_done()">Done</a></td>
+                    <td><a href="Done" class="done" id="done" onclick="easy_numpad_done_bayar()">Done</a></td>
                 </tr>
             </table>
         </div>
@@ -53,6 +56,9 @@ function show_easy_numpad_bayar(thisElement) {
     if (useDefault != "false") {
         document.getElementById("easy-numpad-output").innerText = thisElement.value;
     }
+    var a = parseFloat(sum.value);
+
+    document.getElementById("easy-numpad-output1").innerText = 'Total Rp ' + a.toLocaleString();
 }
 
 function show_easy_numpad(thisElement) {
@@ -204,6 +210,23 @@ function easy_numpad_done() {
         onload = countHrg(_outputID);
         // console.log(_outputID);
         // console.log(easy_numpad_output_val);
+    }
+}
+
+function easy_numpad_done_bayar() {
+    event.preventDefault();
+
+    if (_isInRange) {
+        let easy_numpad_output_val = document.getElementById("easy-numpad-output").innerText;
+
+        if (easy_numpad_output_val.indexOf(".") === (easy_numpad_output_val.length - 1)) {
+            easy_numpad_output_val = easy_numpad_output_val.substring(0, easy_numpad_output_val.length - 1);
+        }
+
+        document.getElementById(_outputID).value = easy_numpad_output_val;
+
+        easy_numpad_close();
+
     }
 }
 

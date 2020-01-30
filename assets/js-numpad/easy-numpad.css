@@ -63,6 +63,41 @@ a#easy-numpad-close {
     font-size: 50px;
 	border-radius: 6px;
 }
+.easy-numpad-output-kembali {
+    width: 100%;
+    border: 1px solid #666;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-sizing: border-box;
+    margin: 0px;
+    text-align: center;/*text-align: center;*/
+    min-height: 60px;
+    display: flex;
+    display: -webkit-flex;
+    align-items: center;
+    -webkit-align-items: center;
+    justify-content: center;
+    -webkit-justify-content: flex-end;/*-webkit-justify-content: center;*/
+    font-size: 50px;
+	border-radius: 6px;
+}
+
+.easy-numpad-output-bayar {
+    width: 100%;
+    border: 1px solid #666;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-sizing: border-box;
+    margin: 0px;
+    text-align: center;/*text-align: center;*/
+    min-height: 60px;
+    display: flex;
+    display: -webkit-flex;
+    align-items: center;
+    -webkit-align-items: center;
+    justify-content: center;
+    -webkit-justify-content: flex-end;/*-webkit-justify-content: center;*/
+    font-size: 50px;
+	border-radius: 6px;
+}
 .easy-numpad-number-container > table {
     width: calc(100% + 6px);
     position: relative;
