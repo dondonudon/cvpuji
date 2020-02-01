@@ -21,7 +21,7 @@
                 <td>Tipe Customer</td>
                 <td>
                     <input id="tipe-cust" type="checkbox" data-onstyle="primary" data-on="Agen"  data-off="Umum" data-toggle="toggle" data-size="normal" value="get_barcode">
-                    <input id="tipe-agen" type="checkbox" data-offstyle="warning" data-onstyle="success" data-on="Agen Besar"  data-off="Agen Kecil" data-toggle="toggle" data-size="normal">
+                    <input id="tipe-agen" type="checkbox" data-offstyle="warning" data-onstyle="success" data-on="Agen B"  data-off="Agen A" data-toggle="toggle" data-size="normal">
                 </td>
             </tr>
             <tr>
@@ -123,7 +123,6 @@
                 load_data();
 
                 // FUNCTION UPDATE
-
                 $(document).on('change', '.table_data', function(){
 
                     var id_trans = $(this).data('row_id');
@@ -141,7 +140,6 @@
                     });
 
                 });
-
                 //END FUNCTION UPDATE
 
                 // FUNCTION DELETE
@@ -171,7 +169,7 @@
                 //GET CHECKBOX
                 $('#tipe-cust').change(function(){
                 if (this.checked) {
-                    $('#judul-transaksi').text("TRANSAKSI AGEN KECIL");
+                    $('#judul-transaksi').text("TRANSAKSI AGEN A");
                     document.getElementById("judul-transaksi").style.color = "blue";
                     document.getElementById("judul-transaksi").style.fontWeight = "900";
                     document.getElementById("tipe-agen").disabled = false;
@@ -189,12 +187,12 @@
 
                 $('#tipe-agen').change(function(){
                 if (this.checked) {
-                    $('#judul-transaksi').text("TRANSAKSI AGEN BESAR");
+                    $('#judul-transaksi').text("TRANSAKSI AGEN B");
                     document.getElementById("judul-transaksi").style.color = "blue";
                     document.getElementById("judul-transaksi").style.fontWeight = "900";
                     $('#tipe-cust').val("get_barcode_agenBesar");
                    } else {
-                    $('#judul-transaksi').text("TRANSAKSI AGEN KECIL");
+                    $('#judul-transaksi').text("TRANSAKSI AGEN A");
                     document.getElementById("judul-transaksi").style.color = "blue";
                     document.getElementById("judul-transaksi").style.fontWeight = "900";
                      $('#tipe-cust').val("get_barcode_agenKecil");
@@ -292,6 +290,11 @@
                         load_data();
                     }
                 });
+            }
+
+            function kembali() {
+                var sum = parseInt($("#sum").val());
+
             }
         </script>
         <script type="text/javascript">

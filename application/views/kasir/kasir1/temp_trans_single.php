@@ -58,7 +58,7 @@ foreach ($query->result() as $row) {
                         <input class="form-control input-lg" name="harga" id="harga" type="text" readonly>
                     </div>
             </td>
-            <td><input id="tipe-agen" type="checkbox" data-offstyle="warning" data-onstyle="success" data-on="Agen Besar"  data-off="Agen Kecil" data-toggle="toggle" data-size="normal"></td>
+            <td><input id="tipe-agen" type="checkbox" data-offstyle="warning" data-onstyle="success" data-on="Agen B"  data-off="Agen A" data-toggle="toggle" data-size="normal"></td>
             </tr>
             <tr>
             <td>Stok</td>
@@ -121,7 +121,7 @@ foreach ($query->result() as $row) {
         //GET CHECKBOX
         $('#tipe-cust').change(function(){
         if (this.checked) {
-            $('#judul-transaksi').text("TRANSAKSI AGEN KECIL");
+            $('#judul-transaksi').text("TRANSAKSI AGEN A");
             $('#agen').val("1");
             document.getElementById("judul-transaksi").style.color = "blue";
             document.getElementById("judul-transaksi").style.fontWeight = "900";
@@ -140,13 +140,13 @@ foreach ($query->result() as $row) {
 
         $('#tipe-agen').change(function(){
         if (this.checked) {
-            $('#judul-transaksi').text("TRANSAKSI AGEN BESAR");
+            $('#judul-transaksi').text("TRANSAKSI AGEN B");
             $('#agen').val("1");
             document.getElementById("judul-transaksi").style.color = "blue";
             document.getElementById("judul-transaksi").style.fontWeight = "900";
             $('#tipe-cust').val("get_harga_agenBesar");
             } else {
-            $('#judul-transaksi').text("TRANSAKSI AGEN KECIL");
+            $('#judul-transaksi').text("TRANSAKSI AGEN A");
             $('#agen').val("1");
             document.getElementById("judul-transaksi").style.color = "blue";
             document.getElementById("judul-transaksi").style.fontWeight = "900";
