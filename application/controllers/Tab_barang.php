@@ -35,6 +35,7 @@ class Tab_barang extends CI_Controller
     'kode_barang' => $row->kode_barang,
     'kode_group'  => $row->kode_group,
     'nama'        => $row->nama,
+    'barcode'     => $row->barcode,
     'ukuran'      => $row->ukuran,
     'merk'        => $row->merk,
     'gambar'      => $row->gambar,
@@ -114,14 +115,7 @@ class Tab_barang extends CI_Controller
    $config['remove_space']  = true;
    $config['file_name']     = 'b_' . time() . '.' . $ext;
    $this->load->library('upload', $config); // Load konfigurasi uploadnya
-   if ($this->upload->do_upload('gambar')) { // Lakukan upload dan Cek jika proses upload berhasil
-    // Jika berhasil :
-
-   } else {
-    // Jika gagal :
-    $return = array('result' => 'failed', 'file' => '', 'error' => $this->upload->display_errors());
-    return $return;
-   }
+   $this->upload->do_upload('gambar'); // Lakukan upload dan Cek jika proses upload berhasil
 
    $this->Tab_barang_model->insert($data);
    $this->session->set_flashdata('message', 'Create Record Success 2');
@@ -169,43 +163,27 @@ class Tab_barang extends CI_Controller
   $ext  = end($tmp); # extra () to prevent notice
 
   if ($name != "") {
-   if ($this->form_validation->run() == false) {
-    $this->update($this->input->post('kode_barang', true));
-   } else {
-    $data = array(
-     //'kode_group'  => $this->input->post('kode_group', true),
-     'nama'        => $this->input->post('nama', true),
-     'barcode'     => $this->input->post('barcode', true),
-     'ukuran'      => $this->input->post('ukuran', true),
-     'merk'        => $this->input->post('merk', true),
-     'gambar'      => 'b_' . time() . '.' . $ext,
-     'harga'       => $this->input->post('harga', true),
-     'harga_kasir' => $this->input->post('harga_kasir', true),
-     'stok'        => $this->input->post('stok', true),
-     'keterangan'  => $this->input->post('keterangan', true),
-     'opsi2'       => $this->input->post('opsi2', true),
-     'opsi3'       => $this->input->post('opsi3', true),
-     'opsi4'       => $this->input->post('opsi4', true),
-     'opsi5'       => $this->input->post('opsi5', true),
-     'datetime'    => date('Y-m-d H:i:s'),
-    );
-
-    //UPLOAD GAMBAR
-    $config['upload_path']   = './upload/image';
-    $config['allowed_types'] = 'jpg|png|jpeg';
-    $config['max_size']      = '2048';
-    $config['remove_space']  = true;
-    $config['file_name']     = 'b_' . time() . '.' . $ext;
-    $this->load->library('upload', $config); // Load konfigurasi uploadnya
-    if ($this->upload->do_upload('gambar')) { // Lakukan upload dan Cek jika proses upload berhasil
-     // Jika berhasil :
-
-    } else {
-     // Jika gagal :
-     $return = array('result' => 'failed', 'file' => '', 'error' => $this->upload->display_errors());
-     return $return;
-    }
-   }
+   $data = array(
+    //'kode_group'  => $this->input->post('kode_group', true),
+    'nama'        => $this->input->post('nama', true),
+    'barcode'     => $this->input->post('barcode', true),
+    'ukuran'      => $this->input->post('ukuran', true),
+    'merk'        => $this->input->post('merk', true),
+    'gambar'      => 'b_' . time() . '.' . $ext,
+    'harga'       => $this->input->post('harga', true),
+    'harga_kasir' => $this->input->post('harga_kasir', true),
+    'keterangan'  => $this->input->post('keterangan', true),
+    'datetime'    => date('Y-m-d H:i:s'),
+   );
+   $this->Tab_barang_model->update($this->input->post('kode_barang', true), $data);
+   //UPLOAD GAMBAR
+   $config['upload_path']   = './upload/image';
+   $config['allowed_types'] = 'jpg|png|jpeg';
+   $config['max_size']      = '2048';
+   $config['remove_space']  = true;
+   $config['file_name']     = 'b_' . time() . '.' . $ext;
+   $this->load->library('upload', $config); // Load konfigurasi uploadnya
+   $this->upload->do_upload('gambar');
   } else {
    $data = array(
     // 'kode_group'  => $this->input->post('kode_group', true),
@@ -215,12 +193,7 @@ class Tab_barang extends CI_Controller
     'merk'        => $this->input->post('merk', true),
     'harga'       => $this->input->post('harga', true),
     'harga_kasir' => $this->input->post('harga_kasir', true),
-    'stok'        => $this->input->post('stok', true),
     'keterangan'  => $this->input->post('keterangan', true),
-    'opsi2'       => $this->input->post('opsi2', true),
-    'opsi3'       => $this->input->post('opsi3', true),
-    'opsi4'       => $this->input->post('opsi4', true),
-    'opsi5'       => $this->input->post('opsi5', true),
     'datetime'    => date('Y-m-d H:i:s'),
    );
   }
