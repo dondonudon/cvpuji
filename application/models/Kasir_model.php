@@ -458,13 +458,12 @@ class Kasir_model extends CI_Model
   $jumlah_hpp = $hasil->jumlah_hpp;
 
   $cekagen = $q1->row();
-  $agen    = $cekagen->agen;
 
   if (!empty($notrans) && !empty($datetime)) {
    //insert trans
-   if ($agen == 0) {
+   if ($cekagen->agen == 0) {
     $q4 = $this->db->query("INSERT into trans (notrans,kode_m_kasir,jumlah,jumlah_hpp,agen,datetime) VALUES ('$notrans','$kode_m_kasir',$jumlah,$jumlah_hpp,0,'$datetime')");
-   } elseif ($agen == 1) {
+   } elseif ($cekagen->agen == 1) {
     $q4 = $this->db->query("INSERT into trans (notrans,kode_m_kasir,jumlah,jumlah_hpp,agen,datetime) VALUES ('$notrans','$kode_m_kasir',$jumlah,$jumlah_hpp,1,'$datetime')");
    }
 
