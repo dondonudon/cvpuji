@@ -257,6 +257,9 @@ class Master_stok_kasir_model extends CI_Model
   $query = $this->db->query("UPDATE counter SET counter = '$_counter' WHERE id='C'");
   //END UPDATE COUNTER C
 
+  //INSERT produk baru ke stock_m_kasir
+  $this->db->query("INSERT INTO stock_m_kasir (kode_m_kasir, kode_barang, stok, datetime) SELECT kode_m_kasir, kode_barang, qty, datetime FROM log WHERE tipe='B' and kode_barang NOT IN (SELECT kode_barang FROM stock_m_kasir)");
+
  }
 
 }
