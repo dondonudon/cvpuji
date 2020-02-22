@@ -3,51 +3,50 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Kasir1_stock extends CI_Controller
+class Kasir3_stock extends CI_Controller
 {
-    public $kode_m_kasir = 1;
     function __construct()
     {
         parent::__construct();
         $this->load->model('Kasir_stock_model');
-        $this->load->library('form_validation');        
-        $this->session->set_flashdata('title', 'Master Barang | CV PUJI');        
-	$this->load->library('datatables');
+        $this->load->library('form_validation');
+        $this->session->set_flashdata('title', 'Master Barang | CV PUJI');
+        $this->load->library('datatables');
     }
 
     public function index()
     {
-        $data = array (
-            'kode_m_kasir' => $this->kode_m_kasir,
+        $kode_m_kasir = 3;
+        $data = array(
+            'kode_m_kasir' => $kode_m_kasir,
         );
-        $this->load->view('kasir/kasir1/stock_m_kasir_list',$data);
+        $this->load->view('kasir/kasir3/stock_m_kasir_list', $data);
         //$this->template->load('template','stock_m_kasir/stock_m_kasir_list');
-    } 
-    
-    public function json() {
-        $kode_m_kasir = $this->kode_m_kasir;
-        header('Content-Type: application/json');
-        echo $this->Kasir_stock_model->json($kode_m_kasir);
     }
 
-    public function read($id) 
+    public function json()
+    {
+        header('Content-Type: application/json');
+        echo $this->Kasir_stock_model->json();
+    }
+
+    public function read($id)
     {
         $row = $this->Kasir_stock_model->get_by_id($id);
         if ($row) {
             $data = array(
-		'id' => $row->id,
-		'kode_m_kasir' => $row->kode_m_kasir,
-		'kode_barang' => $row->kode_barang,
-		'stok' => $row->stok,
-		'datetime' => $row->datetime,
-	    );
-            $this->template->load('template','stock_m_kasir/stock_m_kasir_read', $data);
+                'id' => $row->id,
+                'kode_m_kasir' => $row->kode_m_kasir,
+                'kode_barang' => $row->kode_barang,
+                'stok' => $row->stok,
+                'datetime' => $row->datetime,
+            );
+            $this->template->load('template', 'stock_m_kasir/stock_m_kasir_read', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
             redirect(site_url('stock_m_kasir'));
         }
     }
-
 }
 
 /* End of file Stock_m_kasir.php */

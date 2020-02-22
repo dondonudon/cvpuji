@@ -3,9 +3,9 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Kasir1_stock extends CI_Controller
+class Kasir2_stock extends CI_Controller
 {
-    public $kode_m_kasir = 1;
+    public $kode_m_kasir = 2;
     function __construct()
     {
         parent::__construct();
@@ -20,7 +20,7 @@ class Kasir1_stock extends CI_Controller
         $data = array (
             'kode_m_kasir' => $this->kode_m_kasir,
         );
-        $this->load->view('kasir/kasir1/stock_m_kasir_list',$data);
+        $this->load->view('kasir/kasir2/stock_m_kasir_list',$data);
         //$this->template->load('template','stock_m_kasir/stock_m_kasir_list');
     } 
     

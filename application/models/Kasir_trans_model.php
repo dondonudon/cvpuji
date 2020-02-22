@@ -23,7 +23,7 @@ class Kasir_trans_model extends CI_Model
   parent::__construct();
  }
 
- private function _get_datatables_query()
+ private function _get_datatables_query($kode_m_kasir)
  {
 
   //add custom filter here
@@ -33,7 +33,7 @@ class Kasir_trans_model extends CI_Model
    $this->db->where('trans.datetime >=', $tgl_a);
    $this->db->where('trans.datetime <=', $tgl_b);
   }
-
+  $this->db->where('trans.kode_m_kasir',$kode_m_kasir);
   $this->db->from($this->table);
   //$this->db->join('trans_detail', 'trans_detail.notrans = trans.notrans');
   //$this->db->join('tab_barang', 'tab_barang.kode_barang = trans_detail.kode_barang');
@@ -70,9 +70,9 @@ class Kasir_trans_model extends CI_Model
   }
  }
 
- public function get_datatables()
+ public function get_datatables($kode_m_kasir)
  {
-  $this->_get_datatables_query();
+  $this->_get_datatables_query($kode_m_kasir);
   if ($_POST['length'] != -1) {
    $this->db->limit($_POST['length'], $_POST['start']);
   }
@@ -81,14 +81,14 @@ class Kasir_trans_model extends CI_Model
   return $query->result();
  }
 
- public function count_filtered()
+ public function count_filtered($kode_m_kasir)
  {
-  $this->_get_datatables_query();
+  $this->_get_datatables_query($kode_m_kasir);
   $query = $this->db->get();
   return $query->num_rows();
  }
 
- public function count_all()
+ public function count_all($kode_m_kasir)
  {
   $this->db->from($this->table);
   return $this->db->count_all_results();

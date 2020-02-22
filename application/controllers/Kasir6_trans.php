@@ -4,10 +4,10 @@ if (!defined('BASEPATH')) {
  exit('No direct script access allowed');
 }
 
-class Kasir1_trans extends CI_Controller
+class Kasir6_trans extends CI_Controller
 {
 
- public $kode_m_kasir = 1;
+ public $kode_m_kasir = 6;
 
  public function __construct()
  {
@@ -23,7 +23,7 @@ class Kasir1_trans extends CI_Controller
   $data = array(
    'kode_m_kasir' => $this->kode_m_kasir,
   );
-  $this->load->view('kasir/kasir1/trans_list', $data);
+  $this->load->view('kasir/kasir6/trans_list', $data);
   //$this->load->view('Layout/Template', $data);
  }
 
@@ -40,7 +40,7 @@ class Kasir1_trans extends CI_Controller
    $row[] = $customers->notrans;
    $row[] = number_format($customers->jumlah);
    $row[] = $customers->datetime;
-   $row[] = '<a class="btn btn-sm btn-primary" href="' . base_url('kasir1_trans/read/' . $customers->notrans) . '" title="Edit" target="_blank">Detail</a>';
+   $row[] = '<a class="btn btn-sm btn-primary" href="' . base_url('kasir6_trans/read/' . $customers->notrans) . '" title="Edit" target="_blank">Detail</a>';
 
    $data[] = $row;
   }
@@ -58,7 +58,7 @@ class Kasir1_trans extends CI_Controller
  public function read($notrans)
  {
   $data = array('notrans' => $notrans);
-  $this->load->view('kasir/kasir1/trans_read', $data);
+  $this->load->view('kasir/kasir6/trans_read', $data);
 
  }
 

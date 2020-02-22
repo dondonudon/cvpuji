@@ -4,9 +4,9 @@ if (!defined('BASEPATH')) {
   exit('No direct script access allowed');
 }
 
-class Kasir1 extends CI_Controller
+class Kasir3 extends CI_Controller
 {
-  public $kode_m_kasir = 1;
+  public $kode_m_kasir = 3;
   public function __construct()
   {
     parent::__construct();
@@ -24,7 +24,7 @@ class Kasir1 extends CI_Controller
     $data = array(
       'kode_m_kasir' => $this->kode_m_kasir,
     );
-    $this->load->view('kasir/kasir1/temp_trans_list', $data);
+    $this->load->view('kasir/kasir3/temp_trans_list', $data);
   }
 
   public function group()
@@ -33,7 +33,7 @@ class Kasir1 extends CI_Controller
       'kode_m_kasir' => $this->kode_m_kasir,
     );
     //$this->template->load('template','temp_trans/temp_trans_form', $data);
-    $this->load->view('kasir/kasir1/temp_trans_group', $data);
+    $this->load->view('kasir/kasir3/temp_trans_group', $data);
   }
 
   public function barang()
@@ -44,7 +44,7 @@ class Kasir1 extends CI_Controller
       'kode_m_kasir' => $this->kode_m_kasir,
     );
     //$this->template->load('template','temp_trans/temp_trans_form', $data);
-    $this->load->view('kasir/kasir1/temp_trans_barang', $data);
+    $this->load->view('kasir/kasir3/temp_trans_barang', $data);
   }
 
   public function single()
@@ -55,7 +55,7 @@ class Kasir1 extends CI_Controller
       'kode_m_kasir' => $this->kode_m_kasir,
     );
     //$this->template->load('template','temp_trans/temp_trans_form', $data);
-    $this->load->view('kasir/kasir1/temp_trans_single', $data);
+    $this->load->view('kasir/kasir3/temp_trans_single', $data);
   }
 
   public function jual_single()
@@ -76,7 +76,7 @@ class Kasir1 extends CI_Controller
 
     $this->Kasir_model->insert($data);
     $this->session->set_flashdata('message', 'Create Record Success 2');
-    redirect(base_url('kasir1'));
+    redirect(base_url('kasir3'));
   }
 
   public function json()
@@ -180,7 +180,7 @@ class Kasir1 extends CI_Controller
     $this->Kasir_model->insert_trans($kode_m_kasir, $notrans);
     $this->print($notrans, $bayar);
     $this->session->set_flashdata('message', 'Create Record Success 2');
-    //   redirect(base_url('kasir1'));
+    //   redirect(base_url('kasir3'));
   }
 
   function print($notrans, $bayar)
@@ -265,7 +265,7 @@ class Kasir1 extends CI_Controller
     //$pdf->Output();
     $pdf->Output('I', $notrans . '.pdf');
     return;
-    redirect(base_url('kasir1'));
+    redirect(base_url('kasir3'));
   }
 
   public function _delete($id)
@@ -275,10 +275,10 @@ class Kasir1 extends CI_Controller
     if ($row) {
       $this->Kasir_model->delete($id);
       $this->session->set_flashdata('message', 'Delete Record Success');
-      redirect(base_url('kasir1'));
+      redirect(base_url('kasir3'));
     } else {
       $this->session->set_flashdata('message', 'Record Not Found');
-      redirect(base_url('kasir1'));
+      redirect(base_url('kasir3'));
     }
   }
 

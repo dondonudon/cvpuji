@@ -13,7 +13,7 @@ class Kasir_mutasi_model extends CI_Model
   $tgl_b        = $tgl['tgl_b'] . " 23:59:59";
   $kode_m_kasir = $tgl['kode_m_kasir'];
 
-  return $this->db->query("SELECT kode_barang,nama,ifnull((select sum(qty) from log where datetime<'$tgl_a' and kode_barang=A.kode_barang and tipe='B'),0) as saldoAwal,masuk,keluar,masuk - keluar as akhir,datetime
+  return $this->db->query("SELECT kode_barang,nama,ifnull((select sum(qty) from log where datetime<'$tgl_a' and kode_barang=A.kode_barang and tipe='B'),0) as saldoAwal,masuk,(keluar-retur) as keluar,masuk - retur - keluar as akhir,datetime
   FROM
     (
     SELECT
@@ -22,6 +22,7 @@ class Kasir_mutasi_model extends CI_Model
 
         SUM(IF(log.tipe = 'B', log.qty, 0)) as masuk,
         SUM(IF(log.tipe = 'C', log.qty, 0)) as keluar,
+        SUM(IF(log.tipe = 'D', log.qty, 0)) as retur,
         log.datetime
     FROM
         log
