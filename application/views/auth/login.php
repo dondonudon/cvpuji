@@ -35,23 +35,25 @@
     <body class="hold-transition login-page">
         <div class="login-box">
             <div class="login-logo">
-                <table  width="450">
-                    <tr>
-                        <td><image src="<?php echo base_url(); ?>assets/image/logo_puji.png" width="150" height="150"></td>
-                        <td align="left"><a href="<?php echo base_url(); ?>"><b>CV</b> PUJI</a></td>
+                <table align="center">
+                    <tr align="center">
+                        <td><image class="img-responsive" src="<?php echo base_url(); ?>assets/image/logo_puji.png" width="150" height="150"></td>
+                    </tr>
+                    <tr align="center">
+                        <td align="left">&nbsp;&nbsp;<a href="<?php echo base_url(); ?>"><b>CV</b> PUJI</a></td>
                     </tr>
                 </table>
             </div>
             <!-- /.login-logo -->
             <div class="login-box-body">
                 <?php
-$status_login = $this->session->userdata('status_login');
-if (empty($status_login)) {
- $message = "Silahkan login untuk masuk ke aplikasi";
-} else {
- $message = $status_login;
-}
-?>
+                    $status_login = $this->session->userdata('status_login');
+                    if (empty($status_login)) {
+                    $message = "Silahkan login untuk masuk ke aplikasi";
+                    } else {
+                    $message = $status_login;
+                    }
+                ?>
                 <p class="login-box-msg"><?php echo $message; ?></p>
 
                 <!--<form action="<?php echo base_url(); ?>/adminlte/index2.html" method="post">-->
@@ -89,15 +91,5 @@ if (empty($status_login)) {
         <!-- Bootstrap 3.3.7 -->
         <script src="<?php echo base_url(); ?>/assets/adminlte/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
         <!-- iCheck -->
-        <script src="<?php echo base_url(); ?>/assets/adminlte/plugins/iCheck/icheck.min.js"></script>
-        <script>
-            $(function () {
-                $('input').iCheck({
-                    checkboxClass: 'icheckbox_square-blue',
-                    radioClass: 'iradio_square-blue',
-                    increaseArea: '20%' // optional
-                });
-            });
-        </script>
     </body>
 </html>
