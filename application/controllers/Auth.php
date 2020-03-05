@@ -20,6 +20,7 @@ Class Auth extends CI_Controller{
         $test     = password_verify($password, $hashPass);
         // query chek users
         $this->db->where('full_name',$full_name);
+        $this->db->where('is_aktif','y');
         //$this->db->where('password',  $test);
         $users       = $this->db->get('tbl_user');
         if($users->num_rows()>0){
@@ -27,7 +28,13 @@ Class Auth extends CI_Controller{
             if(password_verify($password,$user['password'])){
                 // retrive user data to session
                 $this->session->set_userdata($user);
-                redirect('welcome');
+                if ($user['id_user_level']==3) {
+                    redirect('agen_stock');
+                } else if ($user['id_user_level']==4) {
+                    redirect('kasir');
+                } else{
+                    redirect('welcome');
+                }
             }else{
                 redirect('auth');
             }
