@@ -22,7 +22,7 @@
             $id_user_level = $this->session->userdata('id_user_level');
             $sql_menu = "SELECT * 
             FROM tbl_menu 
-            WHERE id_menu in(select id_menu from tbl_hak_akses where id_user_level=$id_user_level) and is_main_menu=0 and is_aktif='y'";
+            WHERE id_menu in(select id_menu from tbl_hak_akses where id_user_level=$id_user_level) and is_main_menu=0 and is_aktif='y' ORDER BY urutan ASC";
         }else{
             $sql_menu = "select * from tbl_menu where is_aktif='y' and is_main_menu=0";
         }
@@ -33,19 +33,34 @@
             // chek is have sub menu
             $this->db->where('is_main_menu',$menu->id_menu);
             $this->db->where('is_aktif','y');
+            $this->db->order_by('urutan','ASC');
             $submenu = $this->db->get('tbl_menu');
+            $tree = 'treeview';
             if($submenu->num_rows()>0){
                 // display sub menu
-                echo "<li class='treeview'>
-                        <a href='#'>
+                $url = $this->uri->segment(1);
+                $sql = $this->db->query("SELECT * FROM tbl_menu WHERE url = '$url' ");
+                $result = $sql->row();
+                $parent = $result->is_main_menu;
+                
+                if ($menu->id_menu == $parent) {
+                    echo "<li class = 'treeview active'>";
+                } else{
+                    echo "<li class = 'treeview'>";
+                }
+                echo    "<a href='#'>
                             <i class='$menu->icon'></i> <span>".strtoupper($menu->title)."</span>
                             <span class='pull-right-container'>
                                 <i class='fa fa-angle-left pull-right'></i>
                             </span>
                         </a>
-                        <ul class='treeview-menu' style='display: none;'>";
+                        <ul class='treeview-menu'>";
                         foreach ($submenu->result() as $sub){
+                            if ($this->uri->segment(1)==$sub->url) {
+                                echo "<li class='active'>".anchor($sub->url,"<i class='$sub->icon'></i> ".strtoupper($sub->title))."</li>";
+                            } else {
                                 echo "<li>".anchor($sub->url,"<i class='$sub->icon'></i> ".strtoupper($sub->title))."</li>";
+                            }
                         }
                         echo" </ul>
                     </li>";
