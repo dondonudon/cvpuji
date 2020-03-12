@@ -45,6 +45,7 @@ if (!empty($transaksi)) {?>
         <th>Saldo Awal</th>
         <th>Masuk</th>
         <th>Keluar</th>
+        <th>Retur</th>
         <th>Saldo AKhir</th>
 
     </tr>
@@ -61,6 +62,7 @@ if (!empty($transaksi)) {?>
   echo "<td>" . $data->saldoAwal . "</td>";
   echo "<td>" . $data->masuk . "</td>";
   echo "<td>" . $data->keluar . "</td>";
+  echo "<td>" . $data->retur . "</td>";
   echo "<td>" . $data->akhir . "</td>";
 //   echo "<td>" . $data->stok_keluar . "</td>";
   echo "<td></td>";

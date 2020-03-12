@@ -136,7 +136,7 @@
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
 
-                <li><a href="<?php echo base_url(); ?>kasir_stock"><i class="fa fa-database" style="color:red"></i> <span>Master Barang</span></a></li>
+                <li><a href="<?php echo base_url(); ?>kasir_m_stock"><i class="fa fa-database" style="color:red"></i> <span>Master Barang</span></a></li>
                 <li><a href="<?php echo base_url(); ?>kasir"><i class="fa fa-shopping-cart" style="color:green"></i> <span>Transaksi</span></a></li>
                 <li><a href="<?php echo base_url(); ?>kasir_trans"><i class="fa fa-clone" style="color:yellow"></i> <span>Laporan</span></a></li>
                 <li><a href="<?php echo base_url(); ?>kasir_mutasi"><i class="fa fa-newspaper-o" style="color:cyan"></i> <span>Mutasi</span></a></li>

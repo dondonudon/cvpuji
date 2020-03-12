@@ -64,7 +64,7 @@
                     },
                     processing: true,
                     serverSide: true,
-                    ajax: {"url": "kasir_stock/json", "type": "POST"},
+                    ajax: {"url": "kasir_m_stock/json", "type": "POST"},
                     columns: [
                         {
                             "data": "id",
