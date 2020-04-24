@@ -1,33 +1,31 @@
 <div class="content-wrapper">
-    <section class="content">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box box-warning box-solid">
-
-                    <div class="box-header">
-                        <h3 class="box-title">KELOLA DATA STOCK_M_KASIR</h3>
-                    </div>
-
-        <div class="box-body">
-        <div style="padding-bottom: 10px;">
-		<?php echo anchor(site_url('kasir_stock/excel'), '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Ms Excel', 'class="btn btn-success btn-sm"'); ?></div>
-        <table class="table table-bordered table-striped" id="mytable">
-            <thead>
-                <tr>
-                    <th width="30px">No</th>
-            <th>Nama Kasir</th>
-		    <th>Nama Barang</th>
-		    <th>Stok</th>
-            <th>Harga</th>
-            <th>Total</th>
-                </tr>
-            </thead>
-
-        </table>
-        </div>
-                    </div>
+  <section class="content">
+      <div class="row">
+          <div class="col-xs-12">
+              <div class="box box-warning box-solid">
+                <div class="box-header">
+                      <h3 class="box-title">ENTRY REKAP</h3>
+                </div>
+                <div class="box-body">
+                  <div class="table-responsive">
+                    <table class="table" id="mytable">
+                      <thead>
+                          <tr>
+                            <th width="30px">No</th>
+                            <th>Nama Barang</th>
+                            <th>Saldo Awal</th>
+                            <th>Transaksi</th>
+                            <th>Sisa</th>
+                            <th>Harga</th>
+                            <th>Jumlah</th>
+                          </tr>
+                      </thead>
+                    </table>
+                  </div>
+                </div>
+              </div>
             </div>
-            </div>
+          </div>
     </section>
 </div>
         <script src="<?php echo base_url('assets/js/jquery-1.11.2.min.js') ?>"></script>
@@ -49,7 +47,7 @@
                 };
 
                 var t = $("#mytable").dataTable({
-					responsive: true,
+                    responsive: true,
                     initComplete: function() {
                         var api = this.api();
                         $('#mytable_filter input')
@@ -63,20 +61,15 @@
                     oLanguage: {
                         sProcessing: "loading..."
                     },
+
                     processing: true,
                     serverSide: true,
-                    ajax: {"url": "kasir_stock/json", "type": "POST"},
+                    ajax: {"url": "agen/json", "type": "POST"},
                     columns: [
                         {
-                            "data": "id",
+                            "data": "kode_barang",
                             "orderable": false
-                        },{"data": "nama_kasir"},{"data": "nama"},{"data": "stok"},{"data": "harga",render: $.fn.dataTable.render.number(',', '.', 0, '')},
-                        {
-                            data: null,
-                            render: function ( data, type, row ) {
-                                return( row.stok  * row.harga  );
-                            }
-                        }
+                        },{"data": "nama"},{"data": "stok"}
                     ],
                     order: [[0, 'desc']],
                     rowCallback: function(row, data, iDisplayIndex) {
@@ -88,4 +81,11 @@
                     }
                 });
             });
+        </script>
+        <script type="text/javascript">
+            <?php if ($this->session->flashdata('success')) {?>
+                alert("<?php echo $this->session->flashdata('success'); ?>");
+            <?php } else if ($this->session->flashdata('error')) {?>
+                alert("<?php echo $this->session->flashdata('error'); ?>");
+            <?php }?>
         </script>

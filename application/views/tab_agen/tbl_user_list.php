@@ -3,26 +3,26 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="box box-warning box-solid">
-
+    
                     <div class="box-header">
-                        <h3 class="box-title">KELOLA DATA STOCK_M_KASIR</h3>
+                        <h3 class="box-title">KELOLA DATA AGEN</h3>
                     </div>
-
+        
         <div class="box-body">
-        <div style="padding-bottom: 10px;">
-		<?php echo anchor(site_url('kasir_stock/excel'), '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Ms Excel', 'class="btn btn-success btn-sm"'); ?></div>
+        <div style="padding-bottom: 10px;"'>
+        <?php echo anchor(site_url('tab_agen/create'), '<i class="fa fa-wpforms" aria-hidden="true"></i> Tambah Data', 'class="btn btn-danger btn-sm"'); ?>
+        </div>
         <table class="table table-bordered table-striped" id="mytable">
             <thead>
                 <tr>
                     <th width="30px">No</th>
-            <th>Nama Kasir</th>
-		    <th>Nama Barang</th>
-		    <th>Stok</th>
-            <th>Harga</th>
-            <th>Total</th>
+		    <th>Username</th>
+		    <th>Email</th>
+		    <th>Status</th>
+		    <th width="200px">Action</th>
                 </tr>
             </thead>
-
+	    
         </table>
         </div>
                     </div>
@@ -49,7 +49,6 @@
                 };
 
                 var t = $("#mytable").dataTable({
-					responsive: true,
                     initComplete: function() {
                         var api = this.api();
                         $('#mytable_filter input')
@@ -65,17 +64,16 @@
                     },
                     processing: true,
                     serverSide: true,
-                    ajax: {"url": "kasir_stock/json", "type": "POST"},
+                    ajax: {"url": "tab_agen/json", "type": "POST"},
                     columns: [
                         {
-                            "data": "id",
+                            "data": "id_users",
                             "orderable": false
-                        },{"data": "nama_kasir"},{"data": "nama"},{"data": "stok"},{"data": "harga",render: $.fn.dataTable.render.number(',', '.', 0, '')},
+                        },{"data": "full_name"},{"data": "email"},{"data": "is_aktif"},
                         {
-                            data: null,
-                            render: function ( data, type, row ) {
-                                return( row.stok  * row.harga  );
-                            }
+                            "data" : "action",
+                            "orderable": false,
+                            "className" : "text-center"
                         }
                     ],
                     order: [[0, 'desc']],

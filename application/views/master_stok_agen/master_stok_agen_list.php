@@ -5,21 +5,21 @@
                 <div class="box box-warning box-solid">
 
                     <div class="box-header">
-                        <h3 class="box-title">KELOLA DATA STOCK_M_KASIR</h3>
+                        <h3 class="box-title">KELOLA DATA MASTER_STOK_AGEN</h3>
                     </div>
 
         <div class="box-body">
-        <div style="padding-bottom: 10px;">
-		<?php echo anchor(site_url('kasir_stock/excel'), '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Ms Excel', 'class="btn btn-success btn-sm"'); ?></div>
+        <div style="padding-bottom: 10px;"'>
+        <?php echo anchor(site_url('master_stok_agen/create'), '<i class="fa fa-wpforms" aria-hidden="true"></i> Tambah Data', 'class="btn btn-danger btn-sm"'); ?>
+		<?php echo anchor(site_url('master_stok_agen/excel'), '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Ms Excel', 'class="btn btn-success btn-sm"'); ?></div>
         <table class="table table-bordered table-striped" id="mytable">
             <thead>
                 <tr>
                     <th width="30px">No</th>
-            <th>Nama Kasir</th>
-		    <th>Nama Barang</th>
-		    <th>Stok</th>
-            <th>Harga</th>
-            <th>Total</th>
+		    <th>No Transaksi</th>
+		    <th>Kasir</th>
+		    <th>Datetime</th>
+		    <th width="200px">Action</th>
                 </tr>
             </thead>
 
@@ -65,18 +65,18 @@
                     },
                     processing: true,
                     serverSide: true,
-                    ajax: {"url": "kasir_stock/json", "type": "POST"},
+                    ajax: {"url": "master_stok_agen/json", "type": "POST"},
                     columns: [
                         {
-                            "data": "id",
+                            "data": "id_s_kasir",
                             "orderable": false
-                        },{"data": "nama_kasir"},{"data": "nama"},{"data": "stok"},{"data": "harga",render: $.fn.dataTable.render.number(',', '.', 0, '')},
+                        },{"data": "nostokkasir"},{"data": "nama"},{"data": "datetime"},
                         {
-                            data: null,
-                            render: function ( data, type, row ) {
-                                return( row.stok  * row.harga  );
-                            }
+                            "data" : "action",
+                            "orderable": false,
+                            "className" : "text-center"
                         }
+
                     ],
                     order: [[0, 'desc']],
                     rowCallback: function(row, data, iDisplayIndex) {
